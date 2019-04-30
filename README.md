@@ -1,3 +1,5 @@
+<br/><br/>
+
 Final Project for Harvard CS205: Computing Foundations for Computational Science ([course website](http://iacs-courses.seas.harvard.edu/courses/cs205/index.html))
 **Contributors:** Zachary Blanks, Cedric Flamant, Elizabeth Lim, Zhai Yi
 
@@ -7,7 +9,13 @@ Github Repo: [link](https://github.com/zblanks/parallel_esn)
 (Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests)
 
 ## Project Overview
-Echo State Networks (ESN) are a form o
+Echo State Networks (ESN) are recurrent neural networks making use of a single layer of sparsely connected nodes ('reservoir'). They are often used for time series tasks, and can be less computationally intensive other than deep learning methods. However, ESNs require fine tuning of many parameters, including the input weights, the reservoir (e.g. how many nodes in the reservoir, what is the spectral radius, etc). This has usually been done through either (a) sequential testing and optimization; or (b) instantiating many random instances, and then picking the best performing set of parameters. Depending on the length of the input data and the size of the reservoir, ESNs can thus be computationally intensive to train. In addition, we have to repeat this training many times before arriving at a good set of parameters. 
+
+We propose to make use of parallel computing architectures to not only make this process **faster**, but also **smarter**. We do this through:
+1. Setting the reservoir to be a _small world network_ with key properties to be defined 
+2. Using _bayesian optimization_ to iteratively find the best set of parameters
+3. Training the network faster through distributed computing with multiple nodes and multiple threads (_OpenMP_ and _MPI_)
+
 - Description of problem and the need for HPC and/or Big Data
 - Description of solution and comparison with existing work on the problem
 
@@ -31,46 +39,3 @@ Discussion about goals achieved, improvements suggested, lessons learnt, future 
 
 ## Citations
 Citations
-
-
-
-
-
-
-## Welcome to GitHub Pages
-
-You can use the [editor on GitHub](https://github.com/rednotion/parallel_esn/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/rednotion/parallel_esn/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
