@@ -23,13 +23,14 @@ We propose to make use of parallel computing architectures to not only make this
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
 Technical description of the parallel application and programming models used
 
-![https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true]
+![](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true)
 
 ## Bayesian Optimization
 
 ## Architecture & Features
 Technical description of the platform and infrastructure 
 Description of advanced features like models/platforms not explained in class, advanced functions of modules, techniques to mitigate overheads, challenging parallelization or implementation aspects...
+![](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.35.07%20PM.png?raw=true)
 
 
 ## Empirical Testing & Results
