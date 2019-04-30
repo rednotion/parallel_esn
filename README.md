@@ -23,6 +23,8 @@ We propose to make use of parallel computing architectures to not only make this
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
 Technical description of the parallel application and programming models used
 
+![Screenshot 2019-04-30 at 6.34.15 PM.png]
+
 ## Bayesian Optimization
 
 ## Architecture & Features
