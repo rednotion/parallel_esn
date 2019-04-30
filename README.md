@@ -23,7 +23,7 @@ We propose to make use of parallel computing architectures to not only make this
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
 Technical description of the parallel application and programming models used
 
-![Screenshot 2019-04-30 at 6.34.15 PM.png]
+![https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true]
 
 ## Bayesian Optimization
 
