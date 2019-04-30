@@ -1,3 +1,41 @@
+# Parallel Echo Stage Networks
+Final Project for Harvard CS205: Computing Foundations for Computational Science ([course website](http://iacs-courses.seas.harvard.edu/courses/cs205/index.html))
+Contributors: Zachary Blanks, Cedric Flamant, Elizabeth Lim, Zhai Yi
+
+## Implementation
+Github Repo: LINK HERE!!
+Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests
+
+## Project Overview
+- Description of problem and the need for HPC and/or Big Data
+- Description of solution and comparison with existing work on the problem
+
+## Echo State Networks
+- Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
+Technical description of the parallel application and programming models used
+
+## Bayesian Optimization
+
+## Architecture & Features
+Technical description of the platform and infrastructure 
+Description of advanced features like models/platforms not explained in class, advanced functions of modules, techniques to mitigate overheads, challenging parallelization or implementation aspects...
+
+
+## Empirical Testing & Results
+- Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
+
+
+## Conclusions
+Discussion about goals achieved, improvements suggested, lessons learnt, future work, interesting insights…
+
+## Citations
+Citations
+
+
+
+
+
+
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/rednotion/parallel_esn/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
