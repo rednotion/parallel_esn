@@ -1,4 +1,3 @@
-# Parallel Echo Stage Networks
 Final Project for Harvard CS205: Computing Foundations for Computational Science ([course website](http://iacs-courses.seas.harvard.edu/courses/cs205/index.html))
 **Contributors:** Zachary Blanks, Cedric Flamant, Elizabeth Lim, Zhai Yi
 
@@ -8,6 +7,7 @@ Github Repo: [link](https://github.com/zblanks/parallel_esn)
 (Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests)
 
 ## Project Overview
+Echo State Networks (ESN) are a form o
 - Description of problem and the need for HPC and/or Big Data
 - Description of solution and comparison with existing work on the problem
 
