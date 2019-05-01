@@ -21,16 +21,33 @@ We propose to make use of parallel computing architectures to not only make this
 
 ## Echo State Networks
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
-Technical description of the parallel application and programming models used
+- Technical description of the parallel application and programming models used
 
-![](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true)
+An ESN is made up of the following components:
+1. Input data `u(t)`
+2. Input weight matrix `W_in`
+3. Reservoir matrix `W`: In our set-up, this will be a _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius `p`
+4. An output weight matrix `W_out` that is trained so as to minimize the least squares error on the validation set. The `W_out` matrix can then be used with any new input data to produce predictions.
+
+![width = 10cm](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true)
+
+_(To be completed: How training an ESN works)_
 
 ## Bayesian Optimization
 
+
 ## Architecture & Features
-Technical description of the platform and infrastructure 
-Description of advanced features like models/platforms not explained in class, advanced functions of modules, techniques to mitigate overheads, challenging parallelization or implementation aspects...
+- Technical description of the platform and infrastructure 
+- Description of advanced features like models/platforms not explained in class, advanced functions of modules, techniques to mitigate overheads, challenging parallelization or implementation aspects...
+
+### Computing Architecture
+The set-up of the Parallel ESN is depicted in the figure below: There will be one leader node that manages the bayesian optimization. It distributes a set of paramater to each worker node to try, and upon completion of the ESN training, the worker node will report back the validation error associated with those parameters, for the leader node to update it's posterior belief before distributing new parameters. The computing architecture of this process represents **coarse-grained parallelism**.
 ![](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.35.07%20PM.png?raw=true)
+
+### Other features
+In addition to coarse-grained parallelism, we also attempt to optimize the training of each individual ESN for **fine-grained parallelism**. In addition to Cythonizing parts of the function (providing typing information), we also use **multi-threading** for the matrix multiplication operations, since those account for a large proportion of computation.
+
+Finally, the entire algorithm is also downloadable and implementable as a **Python package**, which can be accessed at the GitHub repo [here](https://github.com/zblanks/parallel_esn). The package is fully functional, including testing checks, error messages, and examples. 
 
 
 ## Empirical Testing & Results
@@ -41,4 +58,9 @@ Description of advanced features like models/platforms not explained in class, a
 Discussion about goals achieved, improvements suggested, lessons learnt, future work, interesting insights…
 
 ## Citations
-Citations
+Kawai, Y., Tokuno, T., Park, J., & Asada, M. (2017). Echo in a small-world reservoir: Time-series prediction using an economical recurrent neural network. 2017 Joint IEEE International Conference on Development and Learning and Epigenetic Robotics (ICDL-EpiRob). doi:10.1109/devlrn.2017.8329797
+
+Lukoševičius, M. (2012). A Practical Guide to Applying Echo State Networks. Lecture Notes in Computer Science Neural Networks: Tricks of the Trade, 659-686. doi:10.1007/978-3-642-35289-8_36
+
+https://www.pdx.edu/sites/www.pdx.edu.sysc/files/Jaeger_TrainingRNNsTutorial.2005.pdf
+https://arxiv.org/pdf/1611.05193.pdf
