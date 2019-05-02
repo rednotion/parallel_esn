@@ -29,7 +29,7 @@ An ESN is made up of the following components:
 3. Reservoir matrix `W`: In our set-up, this will be a _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius `p`
 4. An output weight matrix `W_out` that is trained so as to minimize the least squares error on the validation set. The `W_out` matrix can then be used with any new input data to produce predictions.
 
-![width = 10cm](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true)
+![width = 8cm](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true)
 
 _(To be completed: How training an ESN works)_
 
@@ -42,13 +42,15 @@ _(To be completed: How training an ESN works)_
 
 ### Computing Architecture
 The set-up of the Parallel ESN is depicted in the figure below: There will be one leader node that manages the bayesian optimization. It distributes a set of paramater to each worker node to try, and upon completion of the ESN training, the worker node will report back the validation error associated with those parameters, for the leader node to update it's posterior belief before distributing new parameters. The computing architecture of this process represents **coarse-grained parallelism**.
-![](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.35.07%20PM.png?raw=true)
+![width = 8cm](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.35.07%20PM.png?raw=true)
 
 ### Other features
 In addition to coarse-grained parallelism, we also attempt to optimize the training of each individual ESN for **fine-grained parallelism**. In addition to Cythonizing parts of the function (providing typing information), we also use **multi-threading** for the matrix multiplication operations, since those account for a large proportion of computation.
 
 Finally, the entire algorithm is also downloadable and implementable as a **Python package**, which can be accessed at the GitHub repo [here](https://github.com/zblanks/parallel_esn). The package is fully functional, including testing checks, error messages, and examples. 
 
+## Data 
+- Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
 
 ## Empirical Testing & Results
 - Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
