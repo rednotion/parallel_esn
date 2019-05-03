@@ -46,7 +46,7 @@ An ESN is made up of the following components:
 <img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500">
 </center>
 
-<h3>Training an ESN</h3>
+### Training an ESN
 The classical method of training an ESN involves
 1. Generating the reservoir RNN $$\mathbf{W}_{in}$$ and $$\mathbf{W}$$
 2. Train the network using the input $$\mathbf{u}(t)$$ and the activation states of the resevoir $$\mathbf{x}(n)$$. The update rule using some leaking rate $$\alpha$$ and a sigmoid wrapper such as $$tanh$$. 
@@ -58,7 +58,6 @@ Although it may seem simplistic to use a simple linear combination of weights to
 **Choosing the parameters of an ESN**
 
 - The bigger the size of reservoir (number of nodes), the better. However, this requires more computational power.
-- 
 
 **Small World Networks**
 - 
