@@ -8,13 +8,16 @@ Final Project for Harvard CS205: Computing Foundations for Computational Science
 
 Github Repo: [link](https://github.com/zblanks/parallel_esn)
 
-**Unique features**
-- Cythonized functions: When installing the package, the Cythonized functions will be compiled during the process. When using the package, users can set the flag `use_cython = True` to use the cythonized functions during training
+**Notable & Advanced Features**
+- Source code is a distributable Python package with auto-generated documentation with continuous integration
+- C compiled code (Cython) for additional speed-up: When installing the package, the Cythonized functions will be compiled during the process. When using the package, users can set the flag `use_cython = True` to take advantage of this speed-up during training. 
+- Unit testing with `pytest`
+- MPI broadcasting when using parallel architecture systems (e.g. multi-node clusters). Sequential version is also available. 
 
 **Dependencies & Installation Notes**
 - NumPy must be installed before installing the _Parallel ESN_ package
 - User must have GCC (or an equivalent compiler) in order to install the package
-- Dependencies: NumPy, **COMPLETE THIS SECTION**
+- Dependencies: NumPy, Cython **COMPLETE THIS SECTION**
 
 ## Project Overview
 Echo State Networks (ESN) are recurrent neural networks making use of a single layer of sparsely connected nodes ('reservoir'). They are often used for time series tasks, and can be less computationally intensive other than deep learning methods. However, ESNs require fine tuning of many parameters, including the input weights, the reservoir (e.g. how many nodes in the reservoir, what is the spectral radius, etc). This has usually been done through either (a) sequential testing and optimization; or (b) instantiating many random instances, and then picking the best performing set of parameters. Depending on the length of the input data and the size of the reservoir, ESNs can thus be computationally intensive to train. In addition, we have to repeat this training many times before arriving at a good set of parameters. 
@@ -43,8 +46,7 @@ An ESN is made up of the following components:
 <img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500">
 </center>
 
-**Training an ESN**
-
+<h3>Training an ESN</h3>
 The classical method of training an ESN involves
 1. Generating the reservoir RNN $$\mathbf{W}_{in}$$ and $$\mathbf{W}$$
 2. Train the network using the input $$\mathbf{u}(t)$$ and the activation states of the resevoir $$\mathbf{x}(n)$$. The update rule using some leaking rate $$\alpha$$ and a sigmoid wrapper such as $$tanh$$. 
@@ -59,10 +61,15 @@ Although it may seem simplistic to use a simple linear combination of weights to
 - 
 
 **Small World Networks**
+- 
 
 
 ## Bayesian Optimization
 
+
+**Asynchronous Bayesian Optimization**
+
+Some studies have shown that the results obtained from sequential bayesian optimization is equivalent to doing these tasks in parallel, among multiple workers. In addition, under time constraints, doing the bayesian optimization in parallel might lead to less regret (less error) than performing it in a sequential fashion. 
 
 ## Architecture & Features
 - Technical description of the platform and infrastructure 
@@ -74,17 +81,27 @@ The set-up of the Parallel ESN is depicted in the figure below: There will be on
 <img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.35.07%20PM.png?raw=true" width="600">
 </center>
 
-### Other features
-In addition to coarse-grained parallelism, we also attempt to optimize the training of each individual ESN for **fine-grained parallelism**. In addition to Cythonizing parts of the function (providing typing information), we also use **multi-threading** for the matrix multiplication operations, since those account for a large proportion of computation.
+In addition to coarse-grained parallelism, we also attempt to optimize the training of each individual ESN for **fine-grained parallelism**. In addition to Cythonizing parts of the function, we also use **multi-threading** for the matrix multiplication operations, since those account for a large proportion of computation.
+
+### Overheads and Mitigations
+- **Communication**: Minimize size and number of messages by simply passing parameters (set of numbers) and final testing error (single value)
+- **Synchronization**: Bayesian update in leader node much quicker than ESN training; unlikely to cause delays in distributing new testing parameters
+- **Sequential Sections**: Computing X matrix is sequential, but the internal matrix multiplication can be parallelized
+- **Load Balancing**: 
 
 Finally, the entire algorithm is also downloadable and implementable as a **Python package**, which can be accessed at the GitHub repo [here](https://github.com/zblanks/parallel_esn). The package is fully functional, including testing checks, error messages, and examples. 
 
 ## Data 
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
 
+**Historical Hourly Weather Data 2012-2017** ([Dataset on Kaggle](https://www.kaggle.com/selfishgene/historical-hourly-weather-data)): 
+- temperature, humidity, air pressure
+- West Coast Cities and Vancouver 
+
+**Hourly Energy Consumption** ([Dataset on Kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption#EKPC_hourly.csv)):
+
 ## Empirical Testing & Results
 - Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
-
 
 ## Conclusions
 Discussion about goals achieved, improvements suggested, lessons learnt, future work, interesting insights…
@@ -96,3 +113,4 @@ Lukoševičius, M. (2012). A Practical Guide to Applying Echo State Networks. Le
 
 https://www.pdx.edu/sites/www.pdx.edu.sysc/files/Jaeger_TrainingRNNsTutorial.2005.pdf
 https://arxiv.org/pdf/1611.05193.pdf
+http://proceedings.mlr.press/v84/kandasamy18a/kandasamy18a.pdf
