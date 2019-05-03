@@ -60,14 +60,13 @@ Although it may seem simplistic to use a simple linear combination of weights to
 - The bigger the size of reservoir (number of nodes), the better. However, this requires more computational power.
 
 **Small World Networks**
-- 
+- Hello Hello
 
 
 ## Bayesian Optimization
 
 
 **Asynchronous Bayesian Optimization**
-
 Some studies have shown that the results obtained from sequential bayesian optimization is equivalent to doing these tasks in parallel, among multiple workers. In addition, under time constraints, doing the bayesian optimization in parallel might lead to less regret (less error) than performing it in a sequential fashion. 
 
 ## Architecture & Features
