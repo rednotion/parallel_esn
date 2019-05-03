@@ -4,9 +4,16 @@ Final Project for Harvard CS205: Computing Foundations for Computational Science
 **Contributors:** Zachary Blanks, Cedric Flamant, Elizabeth Lim, Zhai Yi
 
 ## Package Instructions
+- Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests
+
 Github Repo: [link](https://github.com/zblanks/parallel_esn)
 
-- Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests
+**Unique features**
+- Cythonized functions: When installing the package, the Cythonized functions will be compiled during the process. When using the package, users can set the flag `use_cython = True` to use the cythonized functions during training
+
+**Notes and requirements**
+- NumPy must be installed before installing the _Parallel ESN_ package
+- User must have GCC (or an equivalent compiler) in order to install the package
 
 ## Project Overview
 Echo State Networks (ESN) are recurrent neural networks making use of a single layer of sparsely connected nodes ('reservoir'). They are often used for time series tasks, and can be less computationally intensive other than deep learning methods. However, ESNs require fine tuning of many parameters, including the input weights, the reservoir (e.g. how many nodes in the reservoir, what is the spectral radius, etc). This has usually been done through either (a) sequential testing and optimization; or (b) instantiating many random instances, and then picking the best performing set of parameters. Depending on the length of the input data and the size of the reservoir, ESNs can thus be computationally intensive to train. In addition, we have to repeat this training many times before arriving at a good set of parameters. 
