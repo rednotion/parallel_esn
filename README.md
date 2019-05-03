@@ -6,7 +6,7 @@ Final Project for Harvard CS205: Computing Foundations for Computational Science
 ## Package Instructions
 Github Repo: [link](https://github.com/zblanks/parallel_esn)
 
-(Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests)
+- Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests
 
 ## Project Overview
 Echo State Networks (ESN) are recurrent neural networks making use of a single layer of sparsely connected nodes ('reservoir'). They are often used for time series tasks, and can be less computationally intensive other than deep learning methods. However, ESNs require fine tuning of many parameters, including the input weights, the reservoir (e.g. how many nodes in the reservoir, what is the spectral radius, etc). This has usually been done through either (a) sequential testing and optimization; or (b) instantiating many random instances, and then picking the best performing set of parameters. Depending on the length of the input data and the size of the reservoir, ESNs can thus be computationally intensive to train. In addition, we have to repeat this training many times before arriving at a good set of parameters. 
@@ -24,14 +24,24 @@ We propose to make use of parallel computing architectures to not only make this
 - Technical description of the parallel application and programming models used
 
 An ESN is made up of the following components:
-1. Input data `u(t)`
-2. Input weight matrix `W_in`
-3. Reservoir matrix `W`: In our set-up, this will be a _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius `p`
-4. An output weight matrix `W_out` that is trained so as to minimize the least squares error on the validation set. The `W_out` matrix can then be used with any new input data to produce predictions.
+- Input data `u(t)`
+- Input weight matrix `W_in`, in which non-zero elements follow a given distribution _(e.g. symmetrical uniform, gaussian, normal with mean 0)_
+- Reservoir matrix `W`: In our set-up, this will be a _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius `p`. Similarly, all non-zero nodes follow the same distribution as $W_{in}$
+- An output weight matrix `W_out` that is trained so as to minimize the least squares error on the validation set. The `W_out` matrix can then be used with any new input data to produce predictions.
 
 ![width = 8cm](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true)
 
-_(To be completed: How training an ESN works)_
+**Training an ESN**
+The classical method of training an ESN involves
+1. Generating the reservoir RNN $W_{in}$ and $W$
+2. Train the network using the input `u(t)` and the activation states of the resevoir `x(n)`. The update rule using some leaking rate $\alpha$ and a sigmoid wrapper such as $tanh$. 
+3. Compute the linear readout weights $W_{out}$ from the reservoir using linear regression that seeks to minimize the MSE between the estimated $y(n)$ and the true $y^{target}(n)$
+
+Although it may seem simplistic to use a simple linear combination of weights to create the final prediction $y(n)$, the ESN capitalizes on the reservoir that both helps create non-linearity of the input, as well as retains memory of the input, to provide complex and rich information. 
+
+**Choosing the paramters of an ESN**
+- The bigger the size of reservoir (number of nodes), the better. However, this requires more computational power.
+- 
 
 ## Bayesian Optimization
 
