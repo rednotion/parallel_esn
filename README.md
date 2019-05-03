@@ -34,17 +34,16 @@ We propose to make use of parallel computing architectures to not only make this
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
 - Technical description of the parallel application and programming models used
 
+<center>
+<img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500">
+</center>
+
 An ESN is made up of the following components:
 - Input data $$\mathbf{u}(t)$$
 - Input weight matrix $$\mathbf{W}_{in}$$, in which non-zero elements follow a given distribution _(e.g. symmetrical uniform, gaussian, normal with mean 0)_
 - Reservoir matrix $$\mathbf{W}$$: In our set-up, this will be a _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius $$\rho$$. The spectral radius $$\rho$$ should be tuned according to how much memory the output depends on (smaller values for short memory). Similarly, all non-zero nodes follow the same distribution as $$\mathbf{W}_{in}$$. 
 - An output weight matrix $$\mathbf{W}_{out}$$ that is trained so as to minimize the least squares error on the validation set. The $$\mathbf{W}_{out}$$ matrix can then be used with any new input data to produce predictions.
 
-?? input scaling 
-
-<center>
-<img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500">
-</center>
 
 ### Training an ESN
 The classical method of training an ESN involves
