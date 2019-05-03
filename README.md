@@ -31,7 +31,7 @@ An ESN is made up of the following components:
 
 ?? input scaling 
 
-![width = 8cm](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true)
+<img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500">
 
 **Training an ESN**
 
