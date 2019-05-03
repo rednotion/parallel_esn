@@ -34,20 +34,13 @@ We propose to make use of parallel computing architectures to not only make this
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
 - Technical description of the parallel application and programming models used
 
+### Training an ESN
 <center>
 <img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500">
 </center>
 
-An ESN is made up of the following components:
-- Input data $$\mathbf{u}(t)$$
-- Input weight matrix $$\mathbf{W}_{in}$$, in which non-zero elements follow a given distribution _(e.g. symmetrical uniform, gaussian, normal with mean 0)_
-- Reservoir matrix $$\mathbf{W}$$: In our set-up, this will be a _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius $$\rho$$. The spectral radius $$\rho$$ should be tuned according to how much memory the output depends on (smaller values for short memory). Similarly, all non-zero nodes follow the same distribution as $$\mathbf{W}_{in}$$. 
-- An output weight matrix $$\mathbf{W}_{out}$$ that is trained so as to minimize the least squares error on the validation set. The $$\mathbf{W}_{out}$$ matrix can then be used with any new input data to produce predictions.
-
-
-### Training an ESN
-The classical method of training an ESN involves
-1. Generating the reservoir RNN $$\mathbf{W}_{in}$$ and $$\mathbf{W}$$. The bigger the size of the reservoir (number of nodes), the more computational power needed.
+The classical method of training an ESN involves:
+1. Generating the reservoir RNN with an input weight matrix $$\mathbf{W}_{in}$$ and reservoir matrix $$\mathbf{W}$$. The bigger the size of the reservoir (number of nodes), the more computational power needed. In both these matrices, the non-zero elements should follow a given distribution _(e.g. symmetrical uniform, gaussian, normal with mean 0)_. In our model, the matrices correspond to an adjacency matrix of a small world network (see below).
 2. Train the network using the input $$\mathbf{u}(t)$$ and the activation states of the resevoir $$\mathbf{x}(n)$$. The update rule using some leaking rate $$\alpha$$ and a sigmoid wrapper such as $$tanh$$. 
 3. Compute the linear readout weights $$\mathbf{W}_{out}$$ from the reservoir using linear regression that seeks to minimize the MSE between the estimated $$y(n)$$ and the true $$y^{target}(n)$$. We use the regularization coefficient $$\beta$$ during this process. 
 4. Evaluate the performance of the model on either the training or validation set, using the inputs $$\mathbf{u}(t)$$ and the $$\mathbf{W}_{out}$$ obtained. Retune parameters if necessary.
@@ -56,6 +49,7 @@ Although it may seem simplistic to use a simple linear combination of weights to
 
 ### Small World Networks
 - Hello Hello
+- Reservoir matrix $$\mathbf{W}$$: In our set-up, this will be a _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius $$\rho$$. The spectral radius $$\rho$$ should be tuned according to how much memory the output depends on (smaller values for short memory). Similarly, all non-zero nodes follow the same distribution as $$\mathbf{W}_{in}$$. 
 
 
 ## **Bayesian Optimization**
