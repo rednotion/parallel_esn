@@ -19,7 +19,7 @@ Github Repo: [link](https://github.com/zblanks/parallel_esn)
 - User must have GCC (or an equivalent compiler) in order to install the package
 - Dependencies: NumPy, Cython **COMPLETE THIS SECTION**
 
-## Project Overview
+## **Project Overview**
 Echo State Networks (ESN) are recurrent neural networks making use of a single layer of sparsely connected nodes ('reservoir'). They are often used for time series tasks, and can be less computationally intensive other than deep learning methods. However, ESNs require fine tuning of many parameters, including the input weights, the reservoir (e.g. how many nodes in the reservoir, what is the spectral radius, etc). This has usually been done through either (a) sequential testing and optimization; or (b) instantiating many random instances, and then picking the best performing set of parameters. Depending on the length of the input data and the size of the reservoir, ESNs can thus be computationally intensive to train. In addition, we have to repeat this training many times before arriving at a good set of parameters. 
 
 We propose to make use of parallel computing architectures to not only make this process **faster**, but also **smarter**. We do this through:
@@ -80,6 +80,10 @@ The set-up of the Parallel ESN is depicted in the figure below: There will be on
 </center>
 
 In addition to coarse-grained parallelism, we also attempt to optimize the training of each individual ESN for **fine-grained parallelism**. In addition to Cythonizing parts of the function, we also use **multi-threading** for the matrix multiplication operations, since those account for a large proportion of computation.
+
+### Technical Specifications
+- AWS nodes (m4xlarge)
+- Set-up instructions
 
 ### Overheads and Mitigations
 - **Communication**: Minimize size and number of messages by simply passing parameters (set of numbers) and final testing error (single value)
