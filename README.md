@@ -24,22 +24,27 @@ We propose to make use of parallel computing architectures to not only make this
 - Technical description of the parallel application and programming models used
 
 An ESN is made up of the following components:
-- Input data $$u(t)$$
-- Input weight matrix $$W_{in}$$, in which non-zero elements follow a given distribution _(e.g. symmetrical uniform, gaussian, normal with mean 0)_
-- Reservoir matrix $$W$$: In our set-up, this will be a _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius $$\rho$$. A spectral radius $$\rho < 1$$ is usually recommended in order to ensure that the reservoir maintains its echo-state (memory) property. Similarly, all non-zero nodes follow the same distribution as $$W_{in}$$. 
-- An output weight matrix $$W_{out}$$ that is trained so as to minimize the least squares error on the validation set. The $$W_{out}$$ matrix can then be used with any new input data to produce predictions.
+- Input data $$\mathbf{u}(t)$$
+- Input weight matrix $$\mathbf{W}_{in}$$, in which non-zero elements follow a given distribution _(e.g. symmetrical uniform, gaussian, normal with mean 0)_
+- Reservoir matrix $$\mathbf{W}$$: In our set-up, this will be a _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius $$\rho$$. The spectral radius $$\rho$$ should be tuned according to how much memory the output depends on (smaller values for short memory). Similarly, all non-zero nodes follow the same distribution as $$\mathbf{W}_{in}$$. 
+- An output weight matrix $$\mathbf{W}_{out}$$ that is trained so as to minimize the least squares error on the validation set. The $$\mathbf{W}_{out}$$ matrix can then be used with any new input data to produce predictions.
+
+?? input scaling 
 
 ![width = 8cm](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true)
 
 **Training an ESN**
+
 The classical method of training an ESN involves
-1. Generating the reservoir RNN $$W_{in}$$ and $$W$$
-2. Train the network using the input $$u(t)$$ and the activation states of the resevoir $$x(n)$$. The update rule using some leaking rate $$\alpha$$ and a sigmoid wrapper such as $$tanh$$. 
-3. Compute the linear readout weights $$W_{out}$$ from the reservoir using linear regression that seeks to minimize the MSE between the estimated $$y(n)$$ and the true $$y^{target}(n)$$
+1. Generating the reservoir RNN $$\mathbf{W}_{in}$$ and $$\mathbf{W}$$
+2. Train the network using the input $$\mathbf{u}(t)$$ and the activation states of the resevoir $$\mathbf{x}(n)$$. The update rule using some leaking rate $$\alpha$$ and a sigmoid wrapper such as $$tanh$$. 
+3. Compute the linear readout weights $$\mathbf{W}_{out}$$ from the reservoir using linear regression that seeks to minimize the MSE between the estimated $$y(n)$$ and the true $$y^{target}(n)$$. We use the regularization coefficient $$\beta$$ during this process. 
+4. Evaluate the performance of the model on either the training or validation set, using the inputs $$\mathbf{u}(t)$$ and the $$\mathbf{W}_{out}$$ obtained. Retune parameters if necessary.
 
 Although it may seem simplistic to use a simple linear combination of weights to create the final prediction $$y(n)$$, the ESN capitalizes on the reservoir that both helps create non-linearity of the input, as well as retains memory of the input, to provide complex and rich information. 
 
 **Choosing the paramters of an ESN**
+
 - The bigger the size of reservoir (number of nodes), the better. However, this requires more computational power.
 - 
 
