@@ -31,7 +31,9 @@ An ESN is made up of the following components:
 
 ?? input scaling 
 
+<center>
 <img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500">
+</center>
 
 **Training an ESN**
 
@@ -43,10 +45,13 @@ The classical method of training an ESN involves
 
 Although it may seem simplistic to use a simple linear combination of weights to create the final prediction $$y(n)$$, the ESN capitalizes on the reservoir that both helps create non-linearity of the input, as well as retains memory of the input, to provide complex and rich information. 
 
-**Choosing the paramters of an ESN**
+**Choosing the parameters of an ESN**
 
 - The bigger the size of reservoir (number of nodes), the better. However, this requires more computational power.
 - 
+
+**Small World Networks**
+
 
 ## Bayesian Optimization
 
@@ -57,7 +62,9 @@ Although it may seem simplistic to use a simple linear combination of weights to
 
 ### Computing Architecture
 The set-up of the Parallel ESN is depicted in the figure below: There will be one leader node that manages the bayesian optimization. It distributes a set of paramater to each worker node to try, and upon completion of the ESN training, the worker node will report back the validation error associated with those parameters, for the leader node to update it's posterior belief before distributing new parameters. The computing architecture of this process represents **coarse-grained parallelism**.
-![width = 8cm](https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.35.07%20PM.png?raw=true)
+<center>
+<img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.35.07%20PM.png?raw=true" width="300">
+</center>
 
 ### Other features
 In addition to coarse-grained parallelism, we also attempt to optimize the training of each individual ESN for **fine-grained parallelism**. In addition to Cythonizing parts of the function (providing typing information), we also use **multi-threading** for the matrix multiplication operations, since those account for a large proportion of computation.
