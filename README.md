@@ -89,8 +89,6 @@ In addition to coarse-grained parallelism, we also attempt to optimize the train
 - **Sequential Sections**: Computing X matrix is sequential, but the internal matrix multiplication can be parallelized
 - **Load Balancing**: 
 
-Finally, the entire algorithm is also downloadable and implementable as a **Python package**, which can be accessed at the GitHub repo [here](https://github.com/zblanks/parallel_esn). The package is fully functional, including testing checks, error messages, and examples. 
-
 ## **Data**
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
 
@@ -103,6 +101,10 @@ Finally, the entire algorithm is also downloadable and implementable as a **Pyth
 
 ## **Empirical Testing & Results**
 - Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
+
+### Fine-grained (Number of cores)
+
+### Coarse-grained (Number of nodes)
 
 ## **Conclusions**
 Discussion about goals achieved, improvements suggested, lessons learnt, future work, interesting insights…
