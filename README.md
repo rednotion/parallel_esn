@@ -30,7 +30,7 @@ We propose to make use of parallel computing architectures to not only make this
 - Description of problem and the need for HPC and/or Big Data
 - Description of solution and comparison with existing work on the problem
 
-## Echo State Networks
+## **Echo State Networks**
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
 - Technical description of the parallel application and programming models used
 
@@ -48,28 +48,26 @@ An ESN is made up of the following components:
 
 ### Training an ESN
 The classical method of training an ESN involves
-1. Generating the reservoir RNN $$\mathbf{W}_{in}$$ and $$\mathbf{W}$$
+1. Generating the reservoir RNN $$\mathbf{W}_{in}$$ and $$\mathbf{W}$$. The bigger the size of the reservoir (number of nodes), the more computational power needed.
 2. Train the network using the input $$\mathbf{u}(t)$$ and the activation states of the resevoir $$\mathbf{x}(n)$$. The update rule using some leaking rate $$\alpha$$ and a sigmoid wrapper such as $$tanh$$. 
 3. Compute the linear readout weights $$\mathbf{W}_{out}$$ from the reservoir using linear regression that seeks to minimize the MSE between the estimated $$y(n)$$ and the true $$y^{target}(n)$$. We use the regularization coefficient $$\beta$$ during this process. 
 4. Evaluate the performance of the model on either the training or validation set, using the inputs $$\mathbf{u}(t)$$ and the $$\mathbf{W}_{out}$$ obtained. Retune parameters if necessary.
 
 Although it may seem simplistic to use a simple linear combination of weights to create the final prediction $$y(n)$$, the ESN capitalizes on the reservoir that both helps create non-linearity of the input, as well as retains memory of the input, to provide complex and rich information. 
 
-**Choosing the parameters of an ESN**
-
-- The bigger the size of reservoir (number of nodes), the better. However, this requires more computational power.
-
-**Small World Networks**
+### Small World Networks
 - Hello Hello
 
 
-## Bayesian Optimization
+## **Bayesian Optimization**
 
 
-**Asynchronous Bayesian Optimization**
+### Asynchronous Bayesian Optimization
 Some studies have shown that the results obtained from sequential bayesian optimization is equivalent to doing these tasks in parallel, among multiple workers. In addition, under time constraints, doing the bayesian optimization in parallel might lead to less regret (less error) than performing it in a sequential fashion. 
 
-## Architecture & Features
+
+
+## **Architecture & Features**
 - Technical description of the platform and infrastructure 
 - Description of advanced features like models/platforms not explained in class, advanced functions of modules, techniques to mitigate overheads, challenging parallelization or implementation aspects...
 
@@ -93,22 +91,23 @@ In addition to coarse-grained parallelism, we also attempt to optimize the train
 
 Finally, the entire algorithm is also downloadable and implementable as a **Python package**, which can be accessed at the GitHub repo [here](https://github.com/zblanks/parallel_esn). The package is fully functional, including testing checks, error messages, and examples. 
 
-## Data 
+## **Data**
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
 
-**Historical Hourly Weather Data 2012-2017** ([Dataset on Kaggle](https://www.kaggle.com/selfishgene/historical-hourly-weather-data)): 
-- temperature, humidity, air pressure
-- West Coast Cities and Vancouver 
+**Historical Hourly Weather Data 2012-2017** ([Dataset on Kaggle](https://www.kaggle.com/selfishgene/historical-hourly-weather-data)): The main dataset that we are testing for this project is historical hourly weather data. In particular, we subset the data to focus on a few key and continguous cities along the West Coast, and use 3 variables: Temperature, Humidity and Air Pressure. Weather patterns are a common example of time series data, and by using records from different (but contiguous cities), we hope to capture any time-lag effects (e.g. occurence on rain in a city upstate 1 hour earlier could predict rain now). A cleaned version of the dataset can be accessed **INCLUDE LINK HERE**.
 
-**Hourly Energy Consumption** ([Dataset on Kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption#EKPC_hourly.csv)):
+**Hourly Energy Consumption** ([Dataset on Kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption#EKPC_hourly.csv)): This dataset is included in the examples built into the package. 
 
-## Empirical Testing & Results
+### Train-Validation Split
+(if Cedric wants to write anything)
+
+## **Empirical Testing & Results**
 - Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
 
-## Conclusions
+## **Conclusions**
 Discussion about goals achieved, improvements suggested, lessons learnt, future work, interesting insights…
 
-## Citations
+## **Citations**
 Kawai, Y., Tokuno, T., Park, J., & Asada, M. (2017). Echo in a small-world reservoir: Time-series prediction using an economical recurrent neural network. 2017 Joint IEEE International Conference on Development and Learning and Epigenetic Robotics (ICDL-EpiRob). doi:10.1109/devlrn.2017.8329797
 
 Lukoševičius, M. (2012). A Practical Guide to Applying Echo State Networks. Lecture Notes in Computer Science Neural Networks: Tricks of the Trade, 659-686. doi:10.1007/978-3-642-35289-8_36
