@@ -17,7 +17,7 @@ Github Repo: [link](https://github.com/zblanks/parallel_esn)
 **Dependencies & Installation Notes**
 - NumPy must be installed before installing the _Parallel ESN_ package
 - User must have GCC (or an equivalent compiler) in order to install the package
-- Dependencies: NumPy, Cython **COMPLETE THIS SECTION**
+- Package Dependencies: NumPy, Cython, scikit-learn, networkx, mpi4py
 
 **Running a simple example**
 ??? Or put on github repo
