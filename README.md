@@ -55,38 +55,31 @@ Small world networks are a family of graphs which are characterized by a small s
 
 Kawai et. al (2017) show that using small world networks can produce high performance even when the number of input and output nodes were reduced, unlike standard random or fully connected ESNs. 
 
-We use the Watts and Strogatz method of generating small world networks, which first involves choosing the number of nodes $N$, then setting $k$ number of neighbors for each node, and then rewiring each of these connections with a probability $p$ to a randomly selected node. The final graph is then converted to an adjacency matrix, and connection weights are sampled from  a chosen distribution (e.g. normal, uniform...) to form a reservoir. This can be easily done by making use of existing packages such as `networkx` in Python.
+We use the Watts and Strogatz method of generating small world networks, which first involves choosing the number of nodes $$N$$, then setting $$k$$ number of neighbors for each node, and then rewiring each of these connections with a probability $$p$$ to a randomly selected node. The final graph is then converted to an adjacency matrix, and connection weights are sampled from  a chosen distribution (e.g. normal, uniform...) to form a reservoir. This can be easily done by making use of existing packages such as `networkx` in Python.
 
 The last important parameter for the reservoir matrix is the spectral radius $$\rho$$, which scales the matrix. The spectral radius $$\rho$$ should be tuned according to how much memory the output depends on (smaller values for short memory).
 
+
+
+
 ## **Bayesian Optimization**
-Bayesian Optimization is often used in instances where we aim to evaluate some non-analytic and unknown function $f(\mathbf{x})$. In order to do some, we place some prior belief on what the random function could look like. Then, we sample different $\mathbf{x}_i$s and the associated value $f(\mathbf{x}_i)$. With these evaluations, we update the prior to form the posterior distribution. From this new distribution, we can approximate an '_acquisition function_' that tells us where in the sample space to search and evaluate next. 
+Bayesian Optimization is often used in instances where we aim to evaluate some non-analytic and unknown function $$f(\mathbf{x})$$. In this scenario, our goal is to find the best $$\mathbf{x^*}$$ that maximizes/minimizes our function (e.g. lowest validation error) in the shortest amount of time, through sampling. The strategy works like this: we place some prior belief on what the random function could look like. Then, we sample different $$\mathbf{x}_i$$s and the associated value $$f(\mathbf{x}_i)$$. With these evaluations, we update the prior to form the posterior distribution. From this new distribution, we can approximate an '_acquisition function_' that tells us where in the sample space to search and evaluate next. 
 
-
-Our goal is to find a set of hyper-parameters that achieve low validation error, in a short amount of time
-
-
-Bayesian optimisation methods start with a prior belief dis- tribution for f and incorporate function evaluations into updated beliefs in the form of a posterior. Popular algo- rithms choose points to evaluate f via deterministic query rules such as expected improvement (EI) [21] or upper con- fidence bounds (UCB) [41]. We however, will focus on a randomised selection procedure known as Thompson sam- pling [42], which selects a point by maximising a random sample from the posterior. TS has been explored for se- quential BO [4, 39] and some recent theoretical advances have characterised the performance of TS in sequential set- tings [3, 7, 27, 35, 36].
-
-Asynchronous Parallel TS: For the asynchronously paral- lel setting, we propose a natural adaptation of the above algorithm. Precisely, when a worker finishes an evaluation, we update the posterior with the query-feedback pair, sample g from the posterior, and re-deploy the worker with an evalu- ation at xj = argmaxx g(x). The procedure, called asyTS, is displayed in Algorithm 2. In the first M steps, when at least one of the workers have not been assigned a job yet, the algorithm skips lines 3–5 and samples g from the prior GP, GP1, in line 6.
-Algorithm 2: asyTS
-Require: Prior GP GP(0, κ). 1:D1←∅, GP1←GP(0,κ). 2: for j = 1, 2, . . . do
-3: Wait for a worker to finish.
-4: Dj ← Dj−1 ∪ {(x′, y′)} where (x′, y′) are the
-worker’s previous query/observation.
-5: Compute posterior GPj = GP(μDj , κDj ).
-6: Sample g ∼ GPj , xj ← argmax g(x).
-7: Re-deploy worker to evaluate f at xj .
-8: endfor
+### Thompson Sampling
+There exist different algorithms for choosing the next best point to evaluate the function at. For this project, we use Thompson Sampling, which generates a sample from the posterior distribution, and then selects a point from that sample that maximizes the expected return. 
 
 ### Asynchronous Bayesian Optimization
-Some studies have shown that the results obtained from sequential bayesian optimization is equivalent to doing these tasks in parallel, among multiple workers. In addition, under time constraints, doing the bayesian optimization in parallel might lead to less regret (less error) than performing it in a sequential fashion. 
+Asynchronous Bayesian Optimization refers to the fact that we might have many workers simultaneously trying out evaluating $$\mathbf{x}_i$$, but we do not need to wait for all of them to finish before updating the posterior and generating new points to search. Instead, we simply do it whenever at least one worker has completed the process of training the ESN.
 
+Some studies have shown that the results obtained from sequential bayesian optimization is equivalent to doing these tasks in parallel, among multiple workers. In addition, under time constraints, doing the bayesian optimization in parallel might lead to less regret (less error) than performing it in a sequential fashion. 
 
 
 ## **Architecture & Features**
 - Technical description of the platform and infrastructure 
 - Description of advanced features like models/platforms not explained in class, advanced functions of modules, techniques to mitigate overheads, challenging parallelization or implementation aspects...
+
+### Parallel ESN Package
+We developed the Parallel ESN package from scratch in Python. We leveraged on a few key libraries, such as `networkx` to create the small world network graphs, `numpy` for arrays and matrices, and `scikit-learn` for evaluating the validation/testing error. In addition, we used `Cython` to compile parts of the code in C, and `mpi4py` to set up the communications between nodes in the computing cluster. In addition, we also built helper functions that run examples, or help the user split the data into using training and validation sets. (More information about the package can be found at the top of this page under _Package Instructions_)
 
 ### Computing Architecture
 The set-up of the Parallel ESN is depicted in the figure below: There is one leader node that manages the bayesian optimization. It distributes a set of parameters to each worker node to try, and upon completion of the ESN training, the worker node will report back the validation error associated with those parameters. The leader node will then update its posterior belief before distributing new parameters. The computing architecture of this process represents **coarse-grained parallelism**.
@@ -112,9 +105,9 @@ In addition to coarse-grained parallelism, we also attempt to optimize the train
 ## **Data**
 - _Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc._
 
-**Historical Hourly Weather Data 2012-2017** ([Dataset on Kaggle](https://www.kaggle.com/selfishgene/historical-hourly-weather-data)): The main dataset that we are testing for this project is historical hourly weather data. In particular, we subset the data to focus on a few key and continguous cities along the West Coast, and use 3 variables: Temperature, Humidity and Air Pressure. Weather patterns are a common example of time series data, and by using records from different (but contiguous cities), we hope to capture any time-lag effects (e.g. occurence on rain in a city upstate 1 hour earlier could predict rain now). A cleaned version of the dataset can be accessed **INCLUDE LINK HERE**.
+**Historical Hourly Weather Data 2012-2017** ([Dataset on Kaggle](https://www.kaggle.com/selfishgene/historical-hourly-weather-data)): The main dataset that we are testing for this project is historical hourly weather data. In particular, we subset the data to focus on a few key and continguous cities along the West Coast, and use 3 variables: `Temperature`, `Humidity` and `Air Pressure`. Weather patterns are a common example of time series data, and by using records from different (but contiguous cities), we hope to capture any time-lag effects (e.g. occurence on rain in a city upstate 1 hour earlier could predict rain now). A cleaned version of the dataset can be accessed **INCLUDE LINK HERE**.
 
-**Hourly Energy Consumption** ([Dataset on Kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption#EKPC_hourly.csv)): This dataset is included in the examples built into the package. 
+**Hourly Energy Consumption** ([Dataset on Kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption#EKPC_hourly.csv)): This dataset is included in the examples built into the package. It is much smaller and runs quickly, but shows the performance of using ESNs in time series settings.
 
 ### Train-Validation Split
 (if Cedric wants to write anything)
