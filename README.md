@@ -39,7 +39,7 @@ We propose to make use of parallel computing architectures to not only make this
 
 ### Training an ESN
 <center>
-<img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500"><br><i>Source: Kawai, Y., Tokuno, T., Park, J., & Asada, M. (2017) [1]</i>
+<img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500"><i>Source: Kawai, Y., Tokuno, T., Park, J., & Asada, M. (2017) [1]</i>
 </center>
 
 The classical method of training an ESN involves:
