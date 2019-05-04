@@ -39,7 +39,7 @@ We propose to make use of parallel computing architectures to not only make this
 
 ### Training an ESN
 <center>
-<img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500">
+<img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500"><br><i>Source: Kawai, Y., Tokuno, T., Park, J., & Asada, M. (2017) [1]</i>
 </center>
 
 The classical method of training an ESN involves:
@@ -53,7 +53,7 @@ Although it may seem simplistic to use a simple linear combination of weights to
 ### Small World Networks
 Small world networks are a family of graphs which are characterized by a small shortest path length (average distance between two nodes) and a large clustering coefficient (density of closed triangles, which are three nodes that are all connected). In layman's terms, one can think of this is a social graph, whereby any one individual is connected to a stranger through a series of connections ('_six degrees of separation_'). 
 
-Kawai et. al (2017) show that using small world networks can produce high performance even when the number of input and output nodes were reduced, unlike standard random or fully connected ESNs. 
+Kawai et. al (2017) [1] show that using small world networks can produce high performance even when the number of input and output nodes were reduced, unlike standard random or fully connected ESNs. 
 
 We use the Watts and Strogatz method of generating small world networks, which first involves choosing the number of nodes $$N$$, then setting $$k$$ number of neighbors for each node, and then rewiring each of these connections with a probability $$p$$ to a randomly selected node. The final graph is then converted to an adjacency matrix, and connection weights are sampled from  a chosen distribution (e.g. normal, uniform...) to form a reservoir. This can be easily done by making use of existing packages such as `networkx` in Python.
 
@@ -71,7 +71,7 @@ There exist different algorithms for choosing the next best point to evaluate th
 ### Asynchronous Bayesian Optimization
 Asynchronous Bayesian Optimization refers to the practice whereby we might have many workers simultaneously trying out evaluating $$\mathbf{x}_i$$, but we do not need to wait for all of them to finish before updating the posterior and generating new points to search. Instead, we simply do it whenever at least one worker has completed the process of training the ESN.
 
-Some studies have shown that the results obtained from sequential bayesian optimization is equivalent to doing these tasks in parallel, among multiple workers. In addition, under time constraints, doing the bayesian optimization in parallel might lead to less regret (less error) than performing it in a sequential fashion. 
+Some studies have shown that the results obtained from sequential bayesian optimization is equivalent to doing these tasks in parallel, among multiple workers. In addition, under time constraints, doing the bayesian optimization in parallel might lead to less regret (less error) than performing it in a sequential fashion. (See [5])
 
 
 ## **Architecture & Features**
@@ -123,10 +123,12 @@ In addition to coarse-grained parallelism, we also attempt to optimize the train
 Discussion about goals achieved, improvements suggested, lessons learnt, future work, interesting insights…
 
 ## **Citations**
-Kawai, Y., Tokuno, T., Park, J., & Asada, M. (2017). Echo in a small-world reservoir: Time-series prediction using an economical recurrent neural network. 2017 Joint IEEE International Conference on Development and Learning and Epigenetic Robotics (ICDL-EpiRob). doi:10.1109/devlrn.2017.8329797
+[1] Kawai, Y., Tokuno, T., Park, J., & Asada, M. (2017). Echo in a small-world reservoir: Time-series prediction using an economical recurrent neural network. 2017 Joint IEEE International Conference on Development and Learning and Epigenetic Robotics (ICDL-EpiRob). [doi:10.1109/devlrn.2017.8329797](doi:10.1109/devlrn.2017.8329797)
 
-Lukoševičius, M. (2012). A Practical Guide to Applying Echo State Networks. Lecture Notes in Computer Science Neural Networks: Tricks of the Trade, 659-686. doi:10.1007/978-3-642-35289-8_36
+[2] Lukoševičius, M. (2012). A Practical Guide to Applying Echo State Networks. Lecture Notes in Computer Science Neural Networks: Tricks of the Trade, 659-686. [doi:10.1007/978-3-642-35289-8_36](doi:10.1007/978-3-642-35289-8_36)
 
-https://www.pdx.edu/sites/www.pdx.edu.sysc/files/Jaeger_TrainingRNNsTutorial.2005.pdf
-https://arxiv.org/pdf/1611.05193.pdf
-http://proceedings.mlr.press/v84/kandasamy18a/kandasamy18a.pdf
+[3] H. Jaeger (2002): Tutorial on training recurrent neural networks, covering BPPT, RTRL, EKF and the "echo state network" approach. GMD Report 159, German National Research Center for Information Technology, 2002 (48 pp.) [https://www.pdx.edu/sites/www.pdx.edu.sysc/files/Jaeger_TrainingRNNsTutorial.2005.pdf](https://www.pdx.edu/sites/www.pdx.edu.sysc/files/Jaeger_TrainingRNNsTutorial.2005.pdf)
+
+[4] Yperman, Becker, & Thijs. (2017, June 14). Bayesian optimization of hyper-parameters in reservoir computing. Retrieved from [https://arxiv.org/abs/1611.05193](https://arxiv.org/abs/1611.05193)
+
+[5] Kandasamy, K., Krishnamurthy, A., Schneider, J. & Poczos, B.. (2018). Parallelised Bayesian Optimisation via Thompson Sampling. Proceedings of the Twenty-First International Conference on Artificial Intelligence and Statistics, in PMLR 84:133-142 [http://proceedings.mlr.press/v84/kandasamy18a/kandasamy18a.pdf](http://proceedings.mlr.press/v84/kandasamy18a/kandasamy18a.pdf)
