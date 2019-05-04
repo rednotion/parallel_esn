@@ -48,12 +48,20 @@ The classical method of training an ESN involves:
 Although it may seem simplistic to use a simple linear combination of weights to create the final prediction $$y(n)$$, the ESN capitalizes on the reservoir that both helps create non-linearity of the input, as well as retains memory of the input, to provide complex and rich information. 
 
 ### Small World Networks
-- Hello Hello
-- Reservoir matrix $$\mathbf{W}$$: In our set-up, this will be a _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius $$\rho$$. The spectral radius $$\rho$$ should be tuned according to how much memory the output depends on (smaller values for short memory). Similarly, all non-zero nodes follow the same distribution as $$\mathbf{W}_{in}$$. 
 
+A _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius $$\rho$$. The spectral radius $$\rho$$ should be tuned according to how much memory the output depends on (smaller values for short memory). Similarly, all non-zero nodes follow the same distribution as $$\mathbf{W}_{in}$$. 
+
+N, p, $\rho$, k (number of nearest neighbors)
+Watts and Strogatz
+
+A small-world network lies between regular and random networks. regular network where nodes were connected only with their neighbors (see Fig. 1 (a)). Next, these connections were rewired with a probability p to a randomly selected node
+
+small-world network and can spread information with a minimum number of long-range short cuts, resulting in low wiring-costs. This type of network is characterized by two factors: the shortest path length, L, and the clustering coefficient, C. L is defined as the average number of connections in the shortest path between two nodes. C is defined as the density of closed triangles, or triplets, consisting of three connected nodes. A regular network is characterized by a large C as well as a large L, while in a random network both L and C are small. In contrast, the small-world network has a small L and a large C.
+
+In order to leverage the potential of the small-world topology, we limit the number of the reservoir nodes that receive external input (i.e., input nodes) or omit their signals to the output layer (i.e., output nodes). In addition, we segregate the input nodes from the output nodes, thereby necessitating the propagation of the input signals to the output nodes through the small-world reservoir. 
 
 ## **Bayesian Optimization**
-
+Bayesian Optimization is often used in instances where we aim to evaluate some non-analytic function $f(x)$ 
 
 ### Asynchronous Bayesian Optimization
 Some studies have shown that the results obtained from sequential bayesian optimization is equivalent to doing these tasks in parallel, among multiple workers. In addition, under time constraints, doing the bayesian optimization in parallel might lead to less regret (less error) than performing it in a sequential fashion. 
@@ -77,13 +85,13 @@ In addition to coarse-grained parallelism, we also attempt to optimize the train
 - Set-up instructions
 
 ### Overheads and Mitigations
-- **Communication**: Minimize size and number of messages by simply passing parameters (set of numbers) and final testing error (single value)
-- **Synchronization**: Bayesian update in leader node much quicker than ESN training; unlikely to cause delays in distributing new testing parameters
-- **Sequential Sections**: Computing X matrix is sequential, but the internal matrix multiplication can be parallelized
-- **Load Balancing**: 
+- **Communication**: In order to minimize overhead caused by communication, we kept the number and size of messages to the minimum. In particular, a leader node will only send out a _dictionary_ of parameters to try, and a worker node will send back the _same dictionary_ and the _validation error_. These are simple and small variables that are quick to send. 
+- **Synchronization**: The process of updating the bayesian belief and generating new samples to try is generally quick, and indeed much faster than the training of a single ESN. Thus, it is unlikely that the leader node will cause a lag in the system. In addition, since we are doing _asynchronous bayesian optimization_ (rather than batch/synchronous), there is no need to wait for certain worker nodes to finish trying their parameters, before new ones can be issued. 
+- **Sequential Sections**: Although computing X matrix within the reservoir is sequential (due to the memory/time-dependent property), the matrix multiplications that make up each one of these time-steps can be parallelized/threaded through NumPy or OpenMP. 
+- **Load Balancing**: In general, there is no worry about load-balancing since each worker node is actually handling the _same amount/set of data_, just using different parameters in the training process.
 
 ## **Data**
-- Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
+- _Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc._
 
 **Historical Hourly Weather Data 2012-2017** ([Dataset on Kaggle](https://www.kaggle.com/selfishgene/historical-hourly-weather-data)): The main dataset that we are testing for this project is historical hourly weather data. In particular, we subset the data to focus on a few key and continguous cities along the West Coast, and use 3 variables: Temperature, Humidity and Air Pressure. Weather patterns are a common example of time series data, and by using records from different (but contiguous cities), we hope to capture any time-lag effects (e.g. occurence on rain in a city upstate 1 hour earlier could predict rain now). A cleaned version of the dataset can be accessed **INCLUDE LINK HERE**.
 
