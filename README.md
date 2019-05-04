@@ -39,9 +39,9 @@ We propose to make use of parallel computing architectures to not only make this
 
 ### Training an ESN
 <center>
-<img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500"><i>Source: Kawai, Y., Tokuno, T., Park, J., & Asada, M. (2017) [1]</i>
+<img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500", padding = "0"><br><i>Source: Kawai, Y., Tokuno, T., Park, J., & Asada, M. (2017) [1]</i>
 </center>
-
+<br>
 The classical method of training an ESN involves:
 1. Generating the reservoir RNN with an input weight matrix $$\mathbf{W}_{in}$$ and reservoir matrix $$\mathbf{W}$$. The bigger the size of the reservoir (number of nodes), the more computational power needed. In both these matrices, the non-zero elements should follow a given distribution _(e.g. symmetrical uniform, gaussian, normal with mean 0)_. In our model, the matrices correspond to an adjacency matrix of a small world network (see below).
 2. Train the network using the input $$\mathbf{u}(t)$$ and the activation states of the resevoir $$\mathbf{x}(n)$$. The update rule using some leaking rate $$\alpha$$ and a sigmoid wrapper such as $$tanh$$. 
