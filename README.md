@@ -19,16 +19,19 @@ Github Repo: [link](https://github.com/zblanks/parallel_esn)
 - User must have GCC (or an equivalent compiler) in order to install the package
 - Dependencies: NumPy, Cython **COMPLETE THIS SECTION**
 
+**Running a simple example**
+??? Or put on github repo
+
 ## **Project Overview**
+- _Description of problem and the need for HPC and/or Big Data_
+- _Description of solution and comparison with existing work on the problem_
+
 Echo State Networks (ESN) are recurrent neural networks making use of a single layer of sparsely connected nodes ('reservoir'). They are often used for time series tasks, and can be less computationally intensive other than deep learning methods. However, ESNs require fine tuning of many parameters, including the input weights, the reservoir (e.g. how many nodes in the reservoir, what is the spectral radius, etc). This has usually been done through either (a) sequential testing and optimization; or (b) instantiating many random instances, and then picking the best performing set of parameters. Depending on the length of the input data and the size of the reservoir, ESNs can thus be computationally intensive to train. In addition, we have to repeat this training many times before arriving at a good set of parameters. 
 
 We propose to make use of parallel computing architectures to not only make this process **faster**, but also **smarter**. We do this through:
 1. Setting the reservoir to be a _small world network_ with key properties to be defined 
 2. Using _bayesian optimization_ to iteratively find the best set of parameters
 3. Training the network faster through distributed computing with multiple nodes and multiple threads (_OpenMP_ and _MPI_)
-
-- Description of problem and the need for HPC and/or Big Data
-- Description of solution and comparison with existing work on the problem
 
 ## **Echo State Networks**
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
@@ -48,20 +51,33 @@ The classical method of training an ESN involves:
 Although it may seem simplistic to use a simple linear combination of weights to create the final prediction $$y(n)$$, the ESN capitalizes on the reservoir that both helps create non-linearity of the input, as well as retains memory of the input, to provide complex and rich information. 
 
 ### Small World Networks
+Small world networks are a family of graphs which are characterized by a small shortest path length (average distance between two nodes) and a large clustering coefficient (density of closed triangles, which are three nodes that are all connected). In layman's terms, one can think of this is a social graph, whereby any one individual is connected to a stranger through a series of connections ('_six degrees of separation_'). 
 
-A _small world network_ that can be defined by (a) the number of nodes and (b) the spectral radius $$\rho$$. The spectral radius $$\rho$$ should be tuned according to how much memory the output depends on (smaller values for short memory). Similarly, all non-zero nodes follow the same distribution as $$\mathbf{W}_{in}$$. 
+Kawai et. al (2017) show that using small world networks can produce high performance even when the number of input and output nodes were reduced, unlike standard random or fully connected ESNs. 
 
-N, p, $\rho$, k (number of nearest neighbors)
-Watts and Strogatz
+We use the Watts and Strogatz method of generating small world networks, which first involves choosing the number of nodes $N$, then setting $k$ number of neighbors for each node, and then rewiring each of these connections with a probability $p$ to a randomly selected node. The final graph is then converted to an adjacency matrix, and connection weights are sampled from  a chosen distribution (e.g. normal, uniform...) to form a reservoir. This can be easily done by making use of existing packages such as `networkx` in Python.
 
-A small-world network lies between regular and random networks. regular network where nodes were connected only with their neighbors (see Fig. 1 (a)). Next, these connections were rewired with a probability p to a randomly selected node
-
-small-world network and can spread information with a minimum number of long-range short cuts, resulting in low wiring-costs. This type of network is characterized by two factors: the shortest path length, L, and the clustering coefficient, C. L is defined as the average number of connections in the shortest path between two nodes. C is defined as the density of closed triangles, or triplets, consisting of three connected nodes. A regular network is characterized by a large C as well as a large L, while in a random network both L and C are small. In contrast, the small-world network has a small L and a large C.
-
-In order to leverage the potential of the small-world topology, we limit the number of the reservoir nodes that receive external input (i.e., input nodes) or omit their signals to the output layer (i.e., output nodes). In addition, we segregate the input nodes from the output nodes, thereby necessitating the propagation of the input signals to the output nodes through the small-world reservoir. 
+The last important parameter for the reservoir matrix is the spectral radius $$\rho$$, which scales the matrix. The spectral radius $$\rho$$ should be tuned according to how much memory the output depends on (smaller values for short memory).
 
 ## **Bayesian Optimization**
-Bayesian Optimization is often used in instances where we aim to evaluate some non-analytic function $f(x)$ 
+Bayesian Optimization is often used in instances where we aim to evaluate some non-analytic and unknown function $f(\mathbf{x})$. In order to do some, we place some prior belief on what the random function could look like. Then, we sample different $\mathbf{x}_i$s and the associated value $f(\mathbf{x}_i)$. With these evaluations, we update the prior to form the posterior distribution. From this new distribution, we can approximate an '_acquisition function_' that tells us where in the sample space to search and evaluate next. 
+
+
+Our goal is to find a set of hyper-parameters that achieve low validation error, in a short amount of time
+
+
+Bayesian optimisation methods start with a prior belief dis- tribution for f and incorporate function evaluations into updated beliefs in the form of a posterior. Popular algo- rithms choose points to evaluate f via deterministic query rules such as expected improvement (EI) [21] or upper con- fidence bounds (UCB) [41]. We however, will focus on a randomised selection procedure known as Thompson sam- pling [42], which selects a point by maximising a random sample from the posterior. TS has been explored for se- quential BO [4, 39] and some recent theoretical advances have characterised the performance of TS in sequential set- tings [3, 7, 27, 35, 36].
+
+Asynchronous Parallel TS: For the asynchronously paral- lel setting, we propose a natural adaptation of the above algorithm. Precisely, when a worker finishes an evaluation, we update the posterior with the query-feedback pair, sample g from the posterior, and re-deploy the worker with an evalu- ation at xj = argmaxx g(x). The procedure, called asyTS, is displayed in Algorithm 2. In the first M steps, when at least one of the workers have not been assigned a job yet, the algorithm skips lines 3–5 and samples g from the prior GP, GP1, in line 6.
+Algorithm 2: asyTS
+Require: Prior GP GP(0, κ). 1:D1←∅, GP1←GP(0,κ). 2: for j = 1, 2, . . . do
+3: Wait for a worker to finish.
+4: Dj ← Dj−1 ∪ {(x′, y′)} where (x′, y′) are the
+worker’s previous query/observation.
+5: Compute posterior GPj = GP(μDj , κDj ).
+6: Sample g ∼ GPj , xj ← argmax g(x).
+7: Re-deploy worker to evaluate f at xj .
+8: endfor
 
 ### Asynchronous Bayesian Optimization
 Some studies have shown that the results obtained from sequential bayesian optimization is equivalent to doing these tasks in parallel, among multiple workers. In addition, under time constraints, doing the bayesian optimization in parallel might lead to less regret (less error) than performing it in a sequential fashion. 
@@ -73,7 +89,7 @@ Some studies have shown that the results obtained from sequential bayesian optim
 - Description of advanced features like models/platforms not explained in class, advanced functions of modules, techniques to mitigate overheads, challenging parallelization or implementation aspects...
 
 ### Computing Architecture
-The set-up of the Parallel ESN is depicted in the figure below: There will be one leader node that manages the bayesian optimization. It distributes a set of paramater to each worker node to try, and upon completion of the ESN training, the worker node will report back the validation error associated with those parameters, for the leader node to update it's posterior belief before distributing new parameters. The computing architecture of this process represents **coarse-grained parallelism**.
+The set-up of the Parallel ESN is depicted in the figure below: There is one leader node that manages the bayesian optimization. It distributes a set of parameters to each worker node to try, and upon completion of the ESN training, the worker node will report back the validation error associated with those parameters. The leader node will then update its posterior belief before distributing new parameters. The computing architecture of this process represents **coarse-grained parallelism**.
 <center>
 <img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.35.07%20PM.png?raw=true" width="600">
 </center>
@@ -85,10 +101,13 @@ In addition to coarse-grained parallelism, we also attempt to optimize the train
 - Set-up instructions
 
 ### Overheads and Mitigations
-- **Communication**: In order to minimize overhead caused by communication, we kept the number and size of messages to the minimum. In particular, a leader node will only send out a _dictionary_ of parameters to try, and a worker node will send back the _same dictionary_ and the _validation error_. These are simple and small variables that are quick to send. 
-- **Synchronization**: The process of updating the bayesian belief and generating new samples to try is generally quick, and indeed much faster than the training of a single ESN. Thus, it is unlikely that the leader node will cause a lag in the system. In addition, since we are doing _asynchronous bayesian optimization_ (rather than batch/synchronous), there is no need to wait for certain worker nodes to finish trying their parameters, before new ones can be issued. 
-- **Sequential Sections**: Although computing X matrix within the reservoir is sequential (due to the memory/time-dependent property), the matrix multiplications that make up each one of these time-steps can be parallelized/threaded through NumPy or OpenMP. 
-- **Load Balancing**: In general, there is no worry about load-balancing since each worker node is actually handling the _same amount/set of data_, just using different parameters in the training process.
+**Communication**: In order to minimize overhead caused by communication, we kept the number and size of messages to the minimum. In particular, a leader node will only send out a _dictionary_ of parameters to try, and a worker node will send back the _same dictionary_ and the _validation error_. These are simple and small variables that are quick to send. 
+
+**Synchronization**: The process of updating the bayesian belief and generating new samples to try is generally quick, and indeed much faster than the training of a single ESN. Thus, it is unlikely that the leader node will cause a lag in the system. In addition, since we are doing _asynchronous bayesian optimization_ (rather than batch/synchronous), there is no need to wait for certain worker nodes to finish trying their parameters, before new ones can be issued. 
+
+**Sequential Sections**: Although computing X matrix within the reservoir is sequential (due to the memory/time-dependent property), the matrix multiplications that make up each one of these time-steps can be parallelized/threaded through NumPy or OpenMP. 
+
+**Load Balancing**: In general, there is no worry about load-balancing since each worker node is actually handling the _same amount/set of data_, just using different parameters in the training process.
 
 ## **Data**
 - _Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc._
