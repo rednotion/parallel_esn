@@ -69,7 +69,7 @@ Bayesian Optimization is often used in instances where we aim to evaluate some n
 There exist different algorithms for choosing the next best point to evaluate the function at. For this project, we use Thompson Sampling, which generates a sample from the posterior distribution, and then selects a point from that sample that maximizes the expected return. 
 
 ### Asynchronous Bayesian Optimization
-Asynchronous Bayesian Optimization refers to the fact that we might have many workers simultaneously trying out evaluating $$\mathbf{x}_i$$, but we do not need to wait for all of them to finish before updating the posterior and generating new points to search. Instead, we simply do it whenever at least one worker has completed the process of training the ESN.
+Asynchronous Bayesian Optimization refers to the practice whereby we might have many workers simultaneously trying out evaluating $$\mathbf{x}_i$$, but we do not need to wait for all of them to finish before updating the posterior and generating new points to search. Instead, we simply do it whenever at least one worker has completed the process of training the ESN.
 
 Some studies have shown that the results obtained from sequential bayesian optimization is equivalent to doing these tasks in parallel, among multiple workers. In addition, under time constraints, doing the bayesian optimization in parallel might lead to less regret (less error) than performing it in a sequential fashion. 
 
