@@ -110,11 +110,11 @@ The instructions for setting up the cluster and running the package and experime
 - _Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc._
 
 **Historical Hourly Weather Data 2012-2017** ([Dataset on Kaggle](https://www.kaggle.com/selfishgene/historical-hourly-weather-data)): The main dataset that we are testing for this project is historical hourly weather data. In particular, we subset the data to focus on a few key and continguous cities along the West Coast, and use 3 variables: `Temperature`, `Humidity` and `Air Pressure`. Weather patterns are a common example of time series data, and by using records from different (but contiguous cities), we hope to capture any time-lag effects (e.g. occurence on rain in a city upstate 1 hour earlier could predict rain now). A cleaned version of the dataset can be accessed [here](https://raw.githubusercontent.com/rednotion/parallel_esn_web/master/west_coast_weather.csv).
+- 44345 x 15 input matrix 
+- 90% of data used for training, 8.75% for validation, 1.25% for testing
+
 
 **Hourly Energy Consumption** ([Dataset on Kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption#EKPC_hourly.csv)): This dataset is included in the examples built into the package. It is much smaller and runs quickly, but shows the performance of using ESNs in time series settings.
-
-### Train-Validation Split
-(if Cedric wants to write anything)
 
 ## **Empirical Testing & Results**
 - Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
