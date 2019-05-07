@@ -6,21 +6,19 @@ Final Project for Harvard CS205: Computing Foundations for Computational Science
 ## Package Instructions
 - Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests
 
-Github Repo: [link](https://github.com/zblanks/parallel_esn)
+Technical description of the software design, code baseline, dependencies, and instruction for usage can be found on the **Github Repo**: [link](https://github.com/zblanks/parallel_esn)
 
 **Notable & Advanced Features**
 - Source code is a distributable Python package with auto-generated documentation with continuous integration
 - C compiled code (Cython) for additional speed-up: When installing the package, the Cythonized functions will be compiled during the process. When using the package, users can set the flag `use_cython = True` to take advantage of this speed-up during training. 
 - Unit testing with `pytest`
-- MPI broadcasting when using parallel architecture systems (e.g. multi-node clusters). Sequential version is also available. 
+- Uses `mpi4py` in parallel architecture systems (e.g. multi-node clusters). Sequential version is also available. 
 
 **Dependencies & Installation Notes**
+More information can be found on on the GitHub Repo readme: [link](https://github.com/zblanks/parallel_esn).
 - NumPy must be installed before installing the _Parallel ESN_ package
 - User must have GCC (or an equivalent compiler) in order to install the package
 - Package Dependencies: NumPy, Cython, scikit-learn, networkx, mpi4py
-
-**Running a simple example**
-??? Or put on github repo
 
 ## **Project Overview**
 - _Description of problem and the need for HPC and/or Big Data_
