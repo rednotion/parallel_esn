@@ -129,11 +129,13 @@ In the second part of the experiment, we explored the impact of coarse-grained p
 **Weak scaling**: We note that weak scaling performs badly at the 8-worker node (9 total node) instance. This may be because as we double the number of bayesian iterations, the algorithm has the far more ability to explore larger parameter spaces, and may be testing out parameters with larger matrices that take longer to compute. 
 
 ### Optimizations: Hybrid Parallel Model
+<center>
 | # MPI tasks   | # Threads     | Speed-up    |
 | ------------- | ------------- | ---- |
 | 9  | 4  | 7.38 |
 | 18 | 2 | **8.18** |
 | 36 | 1 | 6.57 |
+</center>
 
 Finally, we attempted hybrid implementations where we tuned both the number of MPI tasks and the number of threads. We set the maximum to be **36 threads**, as each node in our cluster has 4 cores. 
 
