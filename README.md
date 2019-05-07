@@ -91,10 +91,17 @@ The set-up of the Parallel ESN is depicted in the figure below: There is one lea
 In addition to coarse-grained parallelism, we also attempt to optimize the training of each individual ESN for **fine-grained parallelism**. In addition to Cythonizing parts of the function, we also use **multi-threading** for the matrix multiplication operations, since those account for a large proportion of computation.
 
 ### Technical Specifications
-The experiment was run on 9 AWS **m4.2xlarge** instances, with the following specs:
-```
-insert specs here
-```
+The experiment was run on 9 AWS **m4.2xlarge** instances, with the following hardware specs:
+- CPUs:Intel(R) Xeon(R) CPU E5-2686 v4 @ 2.30GHz
+- Cache Memory: L1d (32K), L1i (32K), L2 (256K), L3 (46080K)
+- Memory: 16Gb in bank 0 and bank 1
+- Network Bandwidth: Minimum 1Gigabit/s
+- Storage: 7.7Gb
+and the following software specs:
+- OS: Ubuntu 16.04.5 LTS
+- Linux Kernel: 4.4.0-1079-aws
+- For a full list of dependencies, see [here](https://raw.githubusercontent.com/rednotion/parallel_esn_web/master/dependencies.txt)
+
 The instructions for setting up the cluster and running the package and experiments can be found on the GitHub repo [here](https://github.com/zblanks/parallel_esn).
 
 ### Overheads and Mitigations
@@ -116,8 +123,13 @@ The instructions for setting up the cluster and running the package and experime
 
 **Hourly Energy Consumption** ([Dataset on Kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption#EKPC_hourly.csv)): This dataset is included in the examples built into the package. It is much smaller and runs quickly, but shows the performance of using ESNs in time series settings.
 
+### Train-Validation Split / Data Cleaning
+If cedric wants to write anything
+
+
 ## **Empirical Testing & Results**
 - Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
+
 
 ### Fine-grained (Number of cores)
 
