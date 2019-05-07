@@ -131,7 +131,7 @@ If cedric wants to write anything
 ## **Empirical Testing & Results**
 - Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
 
-### Fine-grained (Number of cores)
+### Fine-grained (Number of threads)
 <center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Finegrained.png?raw=true" width="600"></center>
 Not linear speed-up when threading because there's a lot of synchronization. Not always using all 4 threads because some parts of numpy are single threaded and there are sequential sections we can't get around. 
 
@@ -146,7 +146,12 @@ Will still have a gap due to parallel to overhead.
 Rank 0 node doesn't require more than 1 thread. 4 threads is wasted, 1 thread and 36 tasks might give you a bottleneck. 18, 2 gives you a balance of having multiple threads in matrix multiplication but not creating a bottle neck. 
 
 ## **Conclusions**
-Discussion about goals achieved, improvements suggested, lessons learnt, future work, interesting insights…
+_Discussion about goals achieved, improvements suggested, lessons learnt, future work, interesting insights…_
+Built and got a beta version of a Python package up and running. Took some of the more recent and cutting edge research and implemented it in a new domain (asynchronous bayesian optimization with ESN). 
+Improvements suggested: enabling GPUs for larger matrices, Sparse matrices, improved documentation, try to clean up the Cython parts (don't use it as a dependency). 
+Future work: Explore applying the ESN to other domains.
+Lessons learnt: Hybrid tuning.
+
 
 ## **Citations**
 [1] Kawai, Y., Tokuno, T., Park, J., & Asada, M. (2017). Echo in a small-world reservoir: Time-series prediction using an economical recurrent neural network. 2017 Joint IEEE International Conference on Development and Learning and Epigenetic Robotics (ICDL-EpiRob). [doi:10.1109/devlrn.2017.8329797](doi:10.1109/devlrn.2017.8329797)
