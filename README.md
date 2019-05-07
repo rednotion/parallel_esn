@@ -130,7 +130,7 @@ In the second part of the experiment, we explored the impact of coarse-grained p
 
 ### Optimizations: Hybrid Parallel Model
 | # MPI tasks   | # Threads     | Speed-up    |
-| ------------- | ------------- |
+| ------------- | ------------- | ---- |
 | 9  | 4  | 7.38 |
 | 18 | 2 | **8.18** |
 | 36 | 1 | 6.57 |
