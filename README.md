@@ -129,13 +129,12 @@ In the second part of the experiment, we explored the impact of coarse-grained p
 **Weak scaling**: We note that weak scaling performs badly at the 8-worker node (9 total node) instance. This may be because as we double the number of bayesian iterations, the algorithm has the far more ability to explore larger parameter spaces, and may be testing out parameters with larger matrices that take longer to compute. 
 
 ### Optimizations: Hybrid Parallel Model
-<center>
 | # MPI tasks   | # Threads     | Speed-up    |
 | ------------- | ------------- |
 | 9  | 4  | 7.38 |
 | 18 | 2 | **8.18** |
 | 36 | 1 | 6.57 |
-</center>
+
 Finally, we attempted hybrid implementations where we tuned both the number of MPI tasks and the number of threads. We set the maximum to be **36 threads**, as each node in our cluster has 4 cores. 
 
 As seen by the previous speed-up plot, putting aside an _entire_ node for the bayesian optimization might be a waste of resources. Instead, we could set aside one thread for the BO, and then distribute the remaining 3 threads in the leader node to also conduct ESN training.
@@ -147,7 +146,7 @@ Finally, the best performance was achieved with 18 MPI tasks and 2 threads. As s
 ## **Conclusions**
 Over the course of this project, we felt like we achieved a substantial amount: we managed to pull together some cutting-edge concepts in the field of reservoir computing (asynchronous bayesian optimization and small world networks), and create a beta implementation from scratch.
 
-Future work could look at extending the algorithm to use GPUs, which could help with larger matrices. Alternatively, we could also look at support for sparse matrices. Certain parts of the documentation and implementation could also be cleaned up, such as removing Cython as a dependency and rather distributing the C code to compile instead. 
+Future work could look at extending the algorithm to use GPUs, which could help with larger matrices. Alternatively, we could also look at support for sparse matrices. Certain parts of the documentation and implementation could also be cleaned up, such as removing Cython as a dependency and distributing the C code to compile instead. 
 
 We only applied the parallel ESN framework to weather time series data, but it would be interesting to see how it performs in other domains and applications.
 
