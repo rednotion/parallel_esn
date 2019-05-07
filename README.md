@@ -4,8 +4,6 @@ Final Project for Harvard CS205: Computing Foundations for Computational Science
 **Contributors:** Zachary Blanks, Cedric Flamant, Elizabeth Lim, Zhai Yi
 
 ## Package Instructions
-- _Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests_
-
 Technical description of the software design, code baseline, dependencies, instruction for usage, and test examples can be found on the **Github Repo**: [link](https://github.com/zblanks/parallel_esn)
 
 **Notable & Advanced Features**
@@ -15,9 +13,6 @@ Technical description of the software design, code baseline, dependencies, instr
 - Uses `mpi4py` in parallel architecture systems (e.g. multi-node clusters). Sequential version is also available. 
 
 ## **Project Overview**
-- _Description of problem and the need for HPC and/or Big Data_
-- _Description of solution and comparison with existing work on the problem_
-
 Echo State Networks (ESN) are recurrent neural networks making use of a single layer of sparsely connected nodes ('reservoir'). They are often used for time series tasks, and can be less computationally intensive other than deep learning methods. However, ESNs require fine tuning of many parameters, including the input weights, the reservoir (e.g. how many nodes in the reservoir, what is the spectral radius, etc). This has usually been done through either (a) sequential testing and optimization; or (b) instantiating many random instances, and then picking the best performing set of parameters. Depending on the length of the input data and the size of the reservoir, ESNs can thus be computationally intensive to train. In addition, we have to repeat this training many times before arriving at a good set of parameters. 
 
 We propose to make use of parallel computing architectures to not only make this process **faster**, but also **smarter**. We do this through:
@@ -26,17 +21,11 @@ We propose to make use of parallel computing architectures to not only make this
 3. Training the network faster through distributed computing with multiple nodes and multiple threads (_OpenMP_ and _MPI_)
 
 ### Existing Work
-- LSTM --> ESN as an alternative
-- Numerical complexity 
-- Pull up random ESN packages (no documentation.....) 
-- Grid search (somebody's thesis) (https://phy.duke.edu/sites/phy.duke.edu/files/file-attachments/2015_Thesis_JennySu.pdf)
-- Paper with the practical application of ESNs (heuristics) 
+A popular algorithm for time series data is Long Short-Term Memory (LSTMs), which have a computational complexity of $$O(ELW)$$ where $$E$$ is the number of training epochs, $$L$$ is the length of the time series, and $$W$$ is the number of weights. In contrast, a single ESN is much more efficient with a complexity of $$O(LW)$$. In both cases, parameters would have to be tuned and the network trained multiple times, which makes the process time and computation-intensive. Using ESNs thus already saves significant time. 
 
+In terms of existing implementations of ESN, there exist some practical guides as to how to apply ESNs (see [2]), but these rely largely on rule-of-thumbs and heuristics. Another option is to do a grid search (such as this paper [here](https://phy.duke.edu/sites/phy.duke.edu/files/file-attachments/2015_Thesis_JennySu.pdf)). However, this is computationally inefficient, and would be better served by using intelligent search, which is what we propose. 
 
 ## **Echo State Networks**
-- Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
-- Technical description of the parallel application and programming models used
-
 ### Training an ESN
 <center>
 <img src="https://github.com/rednotion/parallel_esn_web/blob/master/Screenshot%202019-04-30%20at%206.34.15%20PM.png?raw=true" width="500">
@@ -62,7 +51,6 @@ The last important parameter for the reservoir matrix is the spectral radius $$\
 
 
 
-
 ## **Bayesian Optimization**
 Bayesian Optimization is often used in instances where we aim to evaluate some non-analytic and unknown function $$f(\mathbf{x})$$. In this scenario, our goal is to find the best $$\mathbf{x^*}$$ that maximizes/minimizes our function (e.g. lowest validation error) in the shortest amount of time, through sampling. The strategy works like this: we place some prior belief on what the random function could look like. Then, we sample different $$\mathbf{x}_i$$s and the associated value $$f(\mathbf{x}_i)$$. With these evaluations, we update the prior to form the posterior distribution. From this new distribution, we can approximate an '_acquisition function_' that tells us where in the sample space to search and evaluate next. 
 
@@ -76,11 +64,8 @@ Some studies have shown that the results obtained from sequential bayesian optim
 
 
 ## **Architecture & Features**
-- Technical description of the platform and infrastructure 
-- Description of advanced features like models/platforms not explained in class, advanced functions of modules, techniques to mitigate overheads, challenging parallelization or implementation aspects...
-
 ### Parallel ESN Package
-We developed the Parallel ESN package from scratch in Python. We leveraged on a few key libraries, such as `networkx` to create the small world network graphs, `numpy` for arrays and matrices, and `scikit-learn` for evaluating the validation/testing error. In addition, we used `Cython` to compile parts of the code in C, and `mpi4py` to set up the communications between nodes in the computing cluster. In addition, we also built helper functions that run examples, or help the user split the data into using training and validation sets. (More information about the package can be found at the top of this page under _Package Instructions_)
+We developed the Parallel ESN package from scratch in Python. We leveraged on a few key libraries, such as `networkx` to create the small world network graphs, `numpy` for arrays and matrices, and `scikit-learn` for evaluating the validation/testing error. In addition, we used `Cython` to compile parts of the code in C, and `mpi4py` to set up the communications between nodes in the computing cluster. In addition, we also built helper functions that run examples, or help the user split the data into using training and validation sets. (More information about the package can be found at the top of this page under _Package Instructions_ or at the github repo)
 
 ### Computing Architecture
 The set-up of the Parallel ESN is depicted in the figure below: There is one leader node that manages the bayesian optimization. It distributes a set of parameters to each worker node to try, and upon completion of the ESN training, the worker node will report back the validation error associated with those parameters. The leader node will then update its posterior belief before distributing new parameters. The computing architecture of this process represents **coarse-grained parallelism**.
@@ -110,13 +95,11 @@ The instructions for setting up the cluster and running the package and experime
 
 **Synchronization**: The process of updating the bayesian belief and generating new samples to try is generally quick, and indeed much faster than the training of a single ESN. Thus, it is unlikely that the leader node will cause a lag in the system. In addition, since we are doing _asynchronous bayesian optimization_ (rather than batch/synchronous), there is no need to wait for certain worker nodes to finish trying their parameters, before new ones can be issued. 
 
-**Sequential Sections**: Although computing X matrix within the reservoir is sequential (due to the memory/time-dependent property), the matrix multiplications that make up each one of these time-steps can be parallelized/threaded through NumPy or OpenMP. 
+**Sequential Sections**: Although computing the X matrix within the reservoir is sequential (due to the memory/time-dependent property), the matrix multiplications that make up each one of these time-steps can be parallelized and multi-threaded with OpenMP on the backend. 
 
 **Load Balancing**: In general, there is no worry about load-balancing since each worker node is actually handling the _same amount/set of data_, just using different parameters in the training process.
 
 ## **Data**
-- _Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc._
-
 **Historical Hourly Weather Data 2012-2017** ([Dataset on Kaggle](https://www.kaggle.com/selfishgene/historical-hourly-weather-data)): The main dataset that we are testing for this project is historical hourly weather data. In particular, we subset the data to focus on a few key and continguous cities along the West Coast, and use 3 variables: `Temperature`, `Humidity` and `Air Pressure`. Weather patterns are a common example of time series data, and by using records from different (but contiguous cities), we hope to capture any time-lag effects (e.g. occurence on rain in a city upstate 1 hour earlier could predict rain now). A cleaned version of the dataset can be accessed [here](https://raw.githubusercontent.com/rednotion/parallel_esn_web/master/west_coast_weather.csv).
 - 44345 x 15 input matrix 
 - 90% of data used for training, 8.75% for validation, 1.25% for testing
@@ -129,28 +112,46 @@ If cedric wants to write anything
 
 
 ## **Empirical Testing & Results**
-- Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
+For the fine-grained parallelism experiment, we ran the parallel ESN algorithm on a single node for 800 iterations.
+
+For the coarse-grained parallelism, we tested strong scaling with 800 iterations, and weak scaling with 200 iterations as the base (1 worker node = 200 iterations, ... 8 worker nodes = 1600 iterations).
 
 ### Fine-grained (Number of threads)
 <center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Finegrained.png?raw=true" width="400"></center>
-Not linear speed-up when threading because there's a lot of synchronization. Not always using all 4 threads because some parts of numpy are single threaded and there are sequential sections we can't get around. 
+For the first part of the experiment, we explored the impact of using additional threads on 800 iterations. The speed-up is not linear, and this might be due to the overhead and synchronization involved when doing matrix multiplications in a single-node, multi-threaded environment. Additionally, the implementation might not always be using all 4 threads due to sequential portions of the code, and certain numpy operations that might be single-threaded. 
 
 ### Coarse-grained (Number of nodes)
 <center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Speedup.png?raw=true" width="400"></center>
-By distributing the work we can get more scalability with the algorithm. For the 2 node, it's no better than having one, you're wasting time talking (which you don't even need to). 
+In the second part of the experiment, we explored the impact of coarse-grained parallelism by adding more nodes, and making use of MPI to communication between the leader (bayesian updating) node and worker (ESN training nodes). By distributing the work of training the ESN, we get a lot more scalability. 
+
+**Strong scaling** grows linearly as we add nodes, although it suffers from the overhead of setting aside one whole node for bayesian updating. The 2-node instance (1 worker and 1 leader) actually performs worse than the single node sequential baseline, since there is some wasted time sending messages. In a scenario like this, using a single node would have been better. Thus, the benefits really accrue when we have at least 2 worker nodes in addition to a leader. 
+
+**Weak scaling**: We note that weak scaling performs badly at the 8-worker node (9 total node) instance. This may be because as we double the number of bayesian iterations, the algorithm has the far more ability to explore larger parameter spaces, and may be testing out parameters with larger matrices that take longer to compute. 
 
 ### Optimizations: Hybrid Parallel Model
-Set the number of tasks at the number of nodes, then implicitly the number of threads would be 4.
-18, 2 was the best: Adding more threads for matirx multiplication doesnt give you a good incrase (see ifne grained parallelism) 
-Will still have a gap due to parallel to overhead.
-Rank 0 node doesn't require more than 1 thread. 4 threads is wasted, 1 thread and 36 tasks might give you a bottleneck. 18, 2 gives you a balance of having multiple threads in matrix multiplication but not creating a bottle neck. 
+<center>
+| # MPI tasks   | # Threads     | Speed-up    |
+| ------------- | ------------- |
+| 9  | 4  | 7.38 |
+| 18 | 2 | **8.18** |
+| 36 | 1 | 6.57 |
+</center>
+Finally, we attempted hybrid implementations where we tuned both the number of MPI tasks and the number of threads. We set the maximum to be **36 threads**, as each node in our cluster has 4 cores. 
+
+As seen by the previous speed-up plot, putting aside an _entire_ node for the bayesian optimization might be a waste of resources. Instead, we could set aside one thread for the BO, and then distribute the remaining 3 threads in the leader node to also conduct ESN training.
+
+However, specifying too many tasks runs into the problem of bottlenecks. The (36,1) experiment actually produced a slower time than what we saw in the coarse-grained experimentation, potentially because there are too many ESNs being trained at once and the single-thread BO cannot keep up with the updates. Thus, some workers might be laying idle while waiting for new parameters to try. 
+
+Finally, the best performance was achieved with 18 MPI tasks and 2 threads. As seen in the fine-grained parallelism section, while adding more threads does give a performance boost, it does so only marginally. Balancing adding more threads but also adding enough tasks so as to not produce a bottleneck thus creates a better recipe. 
 
 ## **Conclusions**
-_Discussion about goals achieved, improvements suggested, lessons learnt, future work, interesting insights…_
-Built and got a beta version of a Python package up and running. Took some of the more recent and cutting edge research and implemented it in a new domain (asynchronous bayesian optimization with ESN). 
-Improvements suggested: enabling GPUs for larger matrices, Sparse matrices, improved documentation, try to clean up the Cython parts (don't use it as a dependency). 
-Future work: Explore applying the ESN to other domains.
-Lessons learnt: Hybrid tuning.
+Over the course of this project, we felt like we achieved a substantial amount: we managed to pull together some cutting-edge concepts in the field of reservoir computing (asynchronous bayesian optimization and small world networks), and create a beta implementation from scratch.
+
+Future work could look at extending the algorithm to use GPUs, which could help with larger matrices. Alternatively, we could also look at support for sparse matrices. Certain parts of the documentation and implementation could also be cleaned up, such as removing Cython as a dependency and rather distributing the C code to compile instead. 
+
+We only applied the parallel ESN framework to weather time series data, but it would be interesting to see how it performs in other domains and applications.
+
+Finally, an important takeaway is the value in hybrid computing: because of the differences in computation between an ESN training phase and a bayesian updating phase, there is a balance that can be struck so as to reduce as much idle time as possible. In fact, when applying the ESN to other domains, perhaps with larger matrices, the best combination of MPI tasks and threads could change based on the computing time. Understanding the concepts that drive or hinder performance can thus be very helpful in practical implementation. 
 
 
 ## **Citations**
