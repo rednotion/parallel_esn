@@ -92,11 +92,12 @@ In addition to coarse-grained parallelism, we also attempt to optimize the train
 
 ### Technical Specifications
 The experiment was run on 9 AWS **m4.2xlarge** instances, with the following hardware specs:
-- CPUs:Intel(R) Xeon(R) CPU E5-2686 v4 @ 2.30GHz
+- CPUs: Intel(R) Xeon(R) CPU E5-2686 v4 @ 2.30GHz
 - Cache Memory: L1d (32K), L1i (32K), L2 (256K), L3 (46080K)
 - Memory: 16Gb in bank 0 and bank 1
 - Network Bandwidth: Minimum 1Gigabit/s
 - Storage: 7.7Gb
+
 and the following software specs:
 - OS: Ubuntu 16.04.5 LTS
 - Linux Kernel: 4.4.0-1079-aws
