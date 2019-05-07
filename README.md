@@ -132,11 +132,11 @@ If cedric wants to write anything
 - Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
 
 ### Fine-grained (Number of threads)
-<center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Finegrained.png?raw=true" width="600"></center>
+<center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Finegrained.png?raw=true" width="400"></center>
 Not linear speed-up when threading because there's a lot of synchronization. Not always using all 4 threads because some parts of numpy are single threaded and there are sequential sections we can't get around. 
 
 ### Coarse-grained (Number of nodes)
-<center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Speedup.png?raw=true" width="600"></center>
+<center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Speedup.png?raw=true" width="400"></center>
 By distributing the work we can get more scalability with the algorithm. For the 2 node, it's no better than having one, you're wasting time talking (which you don't even need to). 
 
 ### Optimizations: Hybrid Parallel Model
