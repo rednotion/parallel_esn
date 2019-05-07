@@ -4,21 +4,15 @@ Final Project for Harvard CS205: Computing Foundations for Computational Science
 **Contributors:** Zachary Blanks, Cedric Flamant, Elizabeth Lim, Zhai Yi
 
 ## Package Instructions
-- Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests
+- _Technical description of the software design, code baseline, dependencies, how to use the code, and system and environment needed to reproduce your tests_
 
-Technical description of the software design, code baseline, dependencies, and instruction for usage can be found on the **Github Repo**: [link](https://github.com/zblanks/parallel_esn)
+Technical description of the software design, code baseline, dependencies, instruction for usage, and test examples can be found on the **Github Repo**: [link](https://github.com/zblanks/parallel_esn)
 
 **Notable & Advanced Features**
 - Source code is a distributable Python package with auto-generated documentation with continuous integration
 - C compiled code (Cython) for additional speed-up: When installing the package, the Cythonized functions will be compiled during the process. When using the package, users can set the flag `use_cython = True` to take advantage of this speed-up during training. 
 - Unit testing with `pytest`
 - Uses `mpi4py` in parallel architecture systems (e.g. multi-node clusters). Sequential version is also available. 
-
-**Dependencies & Installation Notes**
-More information can be found on on the GitHub Repo readme: [link](https://github.com/zblanks/parallel_esn).
-- NumPy must be installed before installing the _Parallel ESN_ package
-- User must have GCC (or an equivalent compiler) in order to install the package
-- Package Dependencies: NumPy, Cython, scikit-learn, networkx, mpi4py
 
 ## **Project Overview**
 - _Description of problem and the need for HPC and/or Big Data_
@@ -30,6 +24,14 @@ We propose to make use of parallel computing architectures to not only make this
 1. Setting the reservoir to be a _small world network_ with key properties to be defined 
 2. Using _bayesian optimization_ to iteratively find the best set of parameters
 3. Training the network faster through distributed computing with multiple nodes and multiple threads (_OpenMP_ and _MPI_)
+
+### Existing Work
+- LSTM --> ESN as an alternative
+- Numerical complexity 
+- Pull up random ESN packages (no documentation.....) 
+- Grid search (somebody's thesis) 
+- Paper with the practical application of ESNs (heuristics) 
+
 
 ## **Echo State Networks**
 - Description of your model and/or data in detail: where did it come from, how did you acquire it, what does it mean, etc.
