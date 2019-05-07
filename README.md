@@ -131,10 +131,19 @@ If cedric wants to write anything
 ## **Empirical Testing & Results**
 - Performance evaluation (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done
 
-
 ### Fine-grained (Number of cores)
+<center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Finegrained.png?raw=true" width="600"></center>
+Not linear speed-up when threading because there's a lot of synchronization. Not always using all 4 threads because some parts of numpy are single threaded and there are sequential sections we can't get around. 
 
 ### Coarse-grained (Number of nodes)
+<center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Speedup.png?raw=true" width="600"></center>
+By distributing the work we can get more scalability with the algorithm. For the 2 node, it's no better than having one, you're wasting time talking (which you don't even need to). 
+
+### Optimizations: Hybrid Parallel Model
+Set the number of tasks at the number of nodes, then implicitly the number of threads would be 4.
+18, 2 was the best: Adding more threads for matirx multiplication doesnt give you a good incrase (see ifne grained parallelism) 
+Will still have a gap due to parallel to overhead.
+Rank 0 node doesn't require more than 1 thread. 4 threads is wasted, 1 thread and 36 tasks might give you a bottleneck. 18, 2 gives you a balance of having multiple threads in matrix multiplication but not creating a bottle neck. 
 
 ## **Conclusions**
 Discussion about goals achieved, improvements suggested, lessons learnt, future work, interesting insights…
