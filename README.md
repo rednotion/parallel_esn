@@ -29,7 +29,7 @@ We propose to make use of parallel computing architectures to not only make this
 - LSTM --> ESN as an alternative
 - Numerical complexity 
 - Pull up random ESN packages (no documentation.....) 
-- Grid search (somebody's thesis) 
+- Grid search (somebody's thesis) (https://phy.duke.edu/sites/phy.duke.edu/files/file-attachments/2015_Thesis_JennySu.pdf)
 - Paper with the practical application of ESNs (heuristics) 
 
 
@@ -91,8 +91,11 @@ The set-up of the Parallel ESN is depicted in the figure below: There is one lea
 In addition to coarse-grained parallelism, we also attempt to optimize the training of each individual ESN for **fine-grained parallelism**. In addition to Cythonizing parts of the function, we also use **multi-threading** for the matrix multiplication operations, since those account for a large proportion of computation.
 
 ### Technical Specifications
-- AWS nodes (m4xlarge)
-- Set-up instructions
+The experiment was run on 9 AWS **m4.2xlarge** instances, with the following specs:
+```
+insert specs here
+```
+The instructions for setting up the cluster and running the package and experiments can be found on the GitHub repo [here](https://github.com/zblanks/parallel_esn).
 
 ### Overheads and Mitigations
 **Communication**: In order to minimize overhead caused by communication, we kept the number and size of messages to the minimum. In particular, a leader node will only send out a _dictionary_ of parameters to try, and a worker node will send back the _same dictionary_ and the _validation error_. These are simple and small variables that are quick to send. 
