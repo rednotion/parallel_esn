@@ -97,7 +97,7 @@ The instructions for setting up the cluster and running the package and experime
 
 **Sequential Sections**: Although computing the X matrix within the reservoir is sequential (due to the memory/time-dependent property), the matrix multiplications that make up each one of these time-steps can be parallelized and multi-threaded with OpenMP on the backend. 
 
-**Load Balancing**: In general, there is no worry about load-balancing since each worker node is actually handling the _same amount/set of data_, just using different parameters in the training process.
+**Load Balancing**: In general, there is no worry about load-balancing since each worker node only gets assigned a new task whenever it completes the previous one.
 
 ## **Data**
 **Historical Hourly Weather Data 2012-2017** ([Dataset on Kaggle](https://www.kaggle.com/selfishgene/historical-hourly-weather-data)): The main dataset that we are testing for this project is historical hourly weather data. In particular, we subset the data to focus on a few key and continguous cities along the West Coast, and use 3 variables: `Temperature`, `Humidity` and `Air Pressure`. Weather patterns are a common example of time series data, and by using records from different (but contiguous cities), we hope to capture any time-lag effects (e.g. occurence on rain in a city upstate 1 hour earlier could predict rain now). A cleaned version of the dataset can be accessed [here](https://raw.githubusercontent.com/rednotion/parallel_esn_web/master/west_coast_weather.csv).
