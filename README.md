@@ -116,6 +116,16 @@ For the experiment runs in `parallel_esn.experiments.seq_west_coast_weather` and
 
 
 ## **Empirical Testing & Results**
+### Sequential baseline
+The following table contains the results of running the baseline sequential code for different problem sizes.
+
+| N Iterations | Time (seconds) |
+| ------------ | -------------- |
+| 200  | 2024.9139 |
+| 400 | 4038.2928 |
+| 800 | 8248.6406 |
+| 1600 | 19237.6378 |
+
 ### Fine-grained (Number of threads)
 <center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Finegrained.png?raw=true" width="400"></center>
 We started the code parallelization process by using fine-grained changes via OpenMP. To see the resulting speed-up of the code we ran the previous test on a single shared-memory machine and varied the number of threads between one and four (the number of cores on the AWS m4.2xlarge instance). The speed-up is shown in the above figure. The primary takeaway from our results is that by using OpenMP we are indeed able to get a speed-up; however, it is not close to linear. We believe this result can be attributed to two causes:
