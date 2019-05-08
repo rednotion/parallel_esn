@@ -88,7 +88,7 @@ and the following software specs:
 - Linux Kernel: 4.4.0-1079-aws
 - For a full list of dependencies, see [here](https://raw.githubusercontent.com/rednotion/parallel_esn_web/master/dependencies.txt)
 
-The instructions for setting up the cluster and running the package and experiments can be found on the GitHub repo [here](https://github.com/zblanks/parallel_esn).
+The instructions for setting up the cluster and running the package and experiments can be found on the GitHub repo [here](https://github.com/zblanks/parallel_esn/blob/master/cluster_instructions.md).
 
 ### Overheads and Mitigations
 **Communication**: In order to minimize overhead caused by communication, we kept the number and size of messages to the minimum. In particular, a leader node will only send out a _dictionary_ of parameters to try, and a worker node will send back the _same dictionary_ and the _validation error_. These are simple and small variables that are quick to send. 
