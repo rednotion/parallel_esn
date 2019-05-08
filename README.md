@@ -121,10 +121,10 @@ The following table contains the results of running the baseline sequential code
 
 | N Iterations | Time (seconds) |
 | ------------ | -------------- |
-| 200  | 2024.9139 |
-| 400 | 4038.2928 |
-| 800 | 8248.6406 |
-| 1600 | 19237.6378 |
+| 200          | 2024.9139      |
+| 400          | 4038.2928      |
+| 800          | 8248.6406      |
+| 1600         | 19237.6378     |
 
 ### Fine-grained (Number of threads)
 <center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Finegrained.png?raw=true" width="400"></center>
@@ -160,10 +160,10 @@ The weak-scaling may seem a bit strange at first glance. For the cases of one, t
 
 ## Code Optimizations
 | # MPI tasks   | # Threads     | Speed-up    |
-| ------------- | ------------- | ---- |
-| 9  | 4  | 7.38 |
-| 18 | 2 | **8.18** |
-| 36 | 1 | 6.57 |
+| ------------- | ------------- | ----------- |
+| 9             | 4             | 7.38        |
+| 18            | 2             | **8.18**    |
+| 36            | 1             | 6.57        |
 For the final portions of our experiments, we wanted to tune the number of MPI tasks and OpenMP threads to ensure that we were getting as much performance out of the system as possible. The values and results of this experiment are shown in the table above. The upper-bound for MPI tasks is 36 because there was a total of 36 cores in the cluster.
 
 We found the best performing set-up was the case where there was 18 MPI tasks and each task was given two threads. We believe the best explanation for this outcome is that the 18-2 split finds the sweet spot in terms of distributing the work of training ESNs while still providing the speed-up that we demonstrated during the multi-threaded experiment. Remember the primary inhibitor to the scalability in the strong-scaling experiments was the fact that the leader node was getting four threads even though for most of the operations it performs, it may not need that many. This raises a reasonable objection though: why did the pure MPI implementation of 36 tasks and one thread not do the best if the previous claim is true? We believe the answer to this question is two-fold. One, there is a benefit to having multiple threads on a shared-memory system primarily for matrix multiplication operations. Two, when there is too many tasks a bottleneck is created where nodes are waiting for the Gaussian process to be updated because the leader node can only receive one update at a time.
