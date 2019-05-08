@@ -116,11 +116,6 @@ For the experiment runs in `parallel_esn.experiments.seq_west_coast_weather` and
 
 
 ## **Empirical Testing & Results**
-
-For the fine-grained parallelism experiment, we ran the parallel ESN algorithm on a single node for 800 iterations.
-
-For the coarse-grained parallelism, we tested strong scaling with 800 iterations, and weak scaling with 200 iterations as the base (1 worker node = 200 iterations, ... 8 worker nodes = 1600 iterations).
-
 ### Fine-grained (Number of threads)
 <center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Finegrained.png?raw=true" width="400"></center>
 We started the code parallelization process by using fine-grained changes via OpenMP. To see the resulting speed-up of the code we ran the previous test on a single shared-memory machine and varied the number of threads between one and four (the number of cores on the AWS m4.2xlarge instance). The speed-up is shown in the above figure. The primary takeaway from our results is that by using OpenMP we are indeed able to get a speed-up; however, it is not close to linear. We believe this result can be attributed to two causes:
@@ -132,26 +127,38 @@ Therefore to achieve the goal of further minimizing the training time and potent
 
 ### Coarse-grained (Number of nodes)
 <center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Speedup.png?raw=true" width="400"></center>
-In the second part of the experiment, we explored the impact of coarse-grained parallelism by adding more nodes, and making use of MPI to communication between the leader (bayesian updating) node and worker (ESN training nodes). By distributing the work of training the ESN, we get a lot more scalability. 
+Coarse-grained parallelism was achieved by implementing the parallel algorithm detailed previously in this report. Namely, a leader node controls the Bayesian updates and worker nodes train an ESN. To test the scalability of our algorithm, we investigated its strong and weak scaling properties, as well as performing code optimizations by tuning the MPI and OpenMP tasks and threads.
+ 
+#### Strong Scaling
+For each of the strong scaling experiments, we fixed the number of Bayesian search iterations to 800 and tracked the run time when there were one, two, four, and eight worker nodes and one leader node. To be concrete, the term node denotes a single m4.2xlarge instance in the MPI cluster. For these experiments, we went with the default of providing each node with four threads for OpenMP operations. 
 
-**Strong scaling** grows linearly as we add nodes, although it suffers from the overhead of setting aside one whole node for bayesian updating. The 2-node instance (1 worker and 1 leader) actually performs worse than the single node sequential baseline, since there is some wasted time sending messages. In a scenario like this, using a single node would have been better. Thus, the benefits really accrue when we have at least 2 worker nodes in addition to a leader. 
+For the experiment with one leader and one worker node, the algorithms performs worse than the optimized sequential benchmark which is a consequence of the asynchronous Bayesian optimization procedure. By having only one worker node which communicates with a leader node, we are introducing more parallel overheads with no benefit because the search is not being distributed to other workers. However, in the case with two, four, and eight worker nodes, our algorithm does provide a significant speed-up. Notice though that there is a near constant optimality gap between a linear speed-up and the strong-scaling speed-up displayed in the figure. This gap can be primarily attributed to the fact that the algorithm is providing four threads to the leader node even though this may not be beneficial. This topic further explored during code optimizations section.
 
-**Weak scaling**: We note that weak scaling performs badly at the 8-worker node (9 total node) instance. This may be because as we double the number of bayesian iterations, the algorithm has the far more ability to explore larger parameter spaces, and may be testing out parameters with larger matrices that take longer to compute. 
+#### Weak Scaling
+For the weak scaling experiments, we grew the size of the problem proportional to the provided parallel resources. In particular we investigated the following values:
 
-### Optimizations: Hybrid Parallel Model
+| Bayesian Iterations | Number of Worker Nodes |
+|-------------------- |------------------------|
+| 200                 | 1                      |
+| 400                 | 2                      |
+| 800                 | 4                      |
+| 1600                | 8                      |
+
+Similar to the strong scaling experiments we went with the default of providing four threads to each of the nodes. 
+
+The weak-scaling may seem a bit strange at first glance. For the cases of one, two, and four worker nodes, they all take approximately 2100 seconds. Nevertheless, when the number of iterations is increased to 1600, the compute time jumps to roughly 3500. Upon further investigation, we believe the cause of this spike is the Bayesian search process started considering larger matrices which increases the computational burden on the system. An additional point is that Bayesian optimization, as we have coded it, is a stochastic algorithm and thus these variances in speed-up can sometimes be attributed to the process search more or less computationally expensive spaces.
+
+## Code Optimizations
 | # MPI tasks   | # Threads     | Speed-up    |
 | ------------- | ------------- | ---- |
 | 9  | 4  | 7.38 |
 | 18 | 2 | **8.18** |
 | 36 | 1 | 6.57 |
+For the final portions of our experiments, we wanted to tune the number of MPI tasks and OpenMP threads to ensure that we were getting as much performance out of the system as possible. The values and results of this experiment are shown in the table above. The upper-bound for MPI tasks is 36 because there was a total of 36 cores in the cluster.
 
-Finally, we attempted hybrid implementations where we tuned both the number of MPI tasks and the number of threads. We set the maximum to be **36 threads**, as each node in our cluster has 4 cores. 
+We found the best performing set-up was the case where there was 18 MPI tasks and each task was given two threads. We believe the best explanation for this outcome is that the 18-2 split finds the sweet spot in terms of distributing the work of training ESNs while still providing the speed-up that we demonstrated during the multi-threaded experiment. Remember the primary inhibitor to the scalability in the strong-scaling experiments was the fact that the leader node was getting four threads even though for most of the operations it performs, it may not need that many. This raises a reasonable objection though: why did the pure MPI implementation of 36 tasks and one thread not do the best if the previous claim is true? We believe the answer to this question is two-fold. One, there is a benefit to having multiple threads on a shared-memory system primarily for matrix multiplication operations. Two, when there is too many tasks a bottleneck is created where nodes are waiting for the Gaussian process to be updated because the leader node can only receive one update at a time.
 
-As seen by the previous speed-up plot, putting aside an _entire_ node for the bayesian optimization might be a waste of resources. Instead, we could set aside one thread for the BO, and then distribute the remaining 3 threads in the leader node to also conduct ESN training.
-
-However, specifying too many tasks runs into the problem of bottlenecks. The (36,1) experiment actually produced a slower time than what we saw in the coarse-grained experimentation, potentially because there are too many ESNs being trained at once and the single-thread BO cannot keep up with the updates. Thus, some workers might be laying idle while waiting for new parameters to try. 
-
-Finally, the best performance was achieved with 18 MPI tasks and 2 threads. As seen in the fine-grained parallelism section, while adding more threads does give a performance boost, it does so only marginally. Balancing adding more threads but also adding enough tasks so as to not produce a bottleneck thus creates a better recipe. 
+Ultimately the results of this experiment demonstrate the potential speed-ups one can see when combining the strengths of the two programming platforms. Indeed, we went from a speed-up of 7.38 to 8.18 -- much closer to a linear value.
 
 ## **Conclusions**
 Over the course of this project, we felt like we achieved a substantial amount: we managed to pull together some cutting-edge concepts in the field of reservoir computing (asynchronous bayesian optimization and small world networks), and create a beta implementation from scratch.
