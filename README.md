@@ -116,13 +116,19 @@ For the experiment runs in `parallel_esn.experiments.seq_west_coast_weather` and
 
 
 ## **Empirical Testing & Results**
+
 For the fine-grained parallelism experiment, we ran the parallel ESN algorithm on a single node for 800 iterations.
 
 For the coarse-grained parallelism, we tested strong scaling with 800 iterations, and weak scaling with 200 iterations as the base (1 worker node = 200 iterations, ... 8 worker nodes = 1600 iterations).
 
 ### Fine-grained (Number of threads)
 <center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Finegrained.png?raw=true" width="400"></center>
-For the first part of the experiment, we explored the impact of using additional threads on 800 iterations. The speed-up is not linear, and this might be due to the overhead and synchronization involved when doing matrix multiplications in a single-node, multi-threaded environment. Additionally, the implementation might not always be using all 4 threads due to sequential portions of the code, and certain numpy operations that might be single-threaded. 
+We started the code parallelization process by using fine-grained changes via OpenMP. To see the resulting speed-up of the code we ran the previous test on a single shared-memory machine and varied the number of threads between one and four (the number of cores on the AWS m4.2xlarge instance). The speed-up is shown in the above figure. The primary takeaway from our results is that by using OpenMP we are indeed able to get a speed-up; however, it is not close to linear. We believe this result can be attributed to two causes:
+
+1. OpenMP introduces parallel overheads by synchronizing the threads during the matrix multiplication operations
+2. There are sequential parts of the code that cannot be performed in parallel and thus form a bottleneck during the training process.
+
+Therefore to achieve the goal of further minimizing the training time and potentially enabling us to solve larger problems, we felt it was necessary to then employ a coarse-grained parallelization via the message passing interface (MPI).
 
 ### Coarse-grained (Number of nodes)
 <center><img src="https://github.com/rednotion/parallel_esn_web/blob/master/Speedup.png?raw=true" width="400"></center>
