@@ -159,11 +159,13 @@ Similar to the strong scaling experiments we went with the default of providing 
 The weak-scaling may seem a bit strange at first glance. For the cases of one, two, and four worker nodes, they all take approximately 2100 seconds. Nevertheless, when the number of iterations is increased to 1600, the compute time jumps to roughly 3500. Upon further investigation, we believe the cause of this spike is the Bayesian search process started considering larger matrices which increases the computational burden on the system. An additional point is that Bayesian optimization, as we have coded it, is a stochastic algorithm and thus these variances in speed-up can sometimes be attributed to the process search more or less computationally expensive spaces.
 
 ## Code Optimizations
-| # MPI tasks   | # Threads     | Speed-up    |
-| ------------- | ------------- | ----------- |
-| 9             | 4             | 7.38        |
-| 18            | 2             | **8.18**    |
-| 36            | 1             | 6.57        |
+
+| No. MPI tasks   | No. Threads     | Speed-up    |
+| --------------- | --------------- | ----------- |
+| 9               | 4               | 7.38        |
+| 18              | 2               | **8.18**    |
+| 36              | 1               | 6.57        |
+
 For the final portions of our experiments, we wanted to tune the number of MPI tasks and OpenMP threads to ensure that we were getting as much performance out of the system as possible. The values and results of this experiment are shown in the table above. The upper-bound for MPI tasks is 36 because there was a total of 36 cores in the cluster.
 
 We found the best performing set-up was the case where there was 18 MPI tasks and each task was given two threads. We believe the best explanation for this outcome is that the 18-2 split finds the sweet spot in terms of distributing the work of training ESNs while still providing the speed-up that we demonstrated during the multi-threaded experiment. Remember the primary inhibitor to the scalability in the strong-scaling experiments was the fact that the leader node was getting four threads even though for most of the operations it performs, it may not need that many. This raises a reasonable objection though: why did the pure MPI implementation of 36 tasks and one thread not do the best if the previous claim is true? We believe the answer to this question is two-fold. One, there is a benefit to having multiple threads on a shared-memory system primarily for matrix multiplication operations. Two, when there is too many tasks a bottleneck is created where nodes are waiting for the Gaussian process to be updated because the leader node can only receive one update at a time.
