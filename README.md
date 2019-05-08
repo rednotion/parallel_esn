@@ -105,10 +105,14 @@ The instructions for setting up the cluster and running the package and experime
 - 90% of data used for training, 8.75% for validation, 1.25% for testing
 
 
-**Hourly Energy Consumption** ([Dataset on Kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption#EKPC_hourly.csv)): This dataset is included in the examples built into the package. It is much smaller and runs quickly, but shows the performance of using ESNs in time series settings.
+**Hourly Energy Consumption** ([Dataset on Kaggle](https://www.kaggle.com/robikscube/hourly-energy-consumption#EKPC_hourly.csv)): A small portion of this dataset is included in some of the examples built into the package. It is much smaller and runs quickly, but shows the basics of using ESNs to predict time series.
 
 ### Train-Validation Split / Data Cleaning
-If cedric wants to write anything
+For the Hourly Energy Consumption data learning demonstrated in the `example` folder of `parallel_esn`, the last 1/10th of the timeseries data is saved to use as a validation set. No other data cleaning was necessary, as seen in  `parallel_esn.example.power_consumption_recursive`.
+
+The Historical Hourly Weather Data 2012-2017 dataset required the extraction of the cities and measured quantities we wished to train with, and also necessitated some cleaning. This was done using the script [extract_final.py](https://raw.githubusercontent.com/rednotion/parallel_esn_web/master/extract_final.py) which was run in the same directory as the unzipped Kaggle dataset. The cleaning entailed removing extreme outliers in some of the measurements, which were due to sensor malfunctions or data-collection mistakes in the original dataset. The comments in the extraction script detail how outliers were determined. Missing data was linearly interpolated when possible (as opposed to dropping the row of data) to ensure continuity of the time series. We truncated rows at the beginning and the end of the dataset where some feature columns could not be interpolated.
+
+For the experiment runs in `parallel_esn.experiments.seq_west_coast_weather` and `parallel_esn.experiments.mpi_west_coast_weather` we saved the last 10% of the data for validation (8.75%) and testing (1.25%). 
 
 
 ## **Empirical Testing & Results**
